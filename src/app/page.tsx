@@ -6,7 +6,7 @@ import Link from "next/link"
 import { Binary, RefreshCw, Zap, Layers, Network, Key, Shield, Globe, Router, Wifi, Box, Radio, Cpu, Target, Lock, Database, GitBranch, Search, Filter, BarChart3, AreaChart } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-type Category = "All" | "Systems" | "Networking" | "Frontend" | "Security"
+type Category = "All" | "Systems" | "Networking" | "Frontend" | "Security" | "Math"
 
 const projects = [
   {
@@ -212,7 +212,7 @@ const projects = [
   {
     id: "discrete-rv",
     title: "Discrete",
-    category: "Systems",
+    category: "Math",
     description: "Visualizing PMFs for Binomial, Poisson, and Hypergeometric distributions.",
     icon: <BarChart3 className="w-6 h-6 text-blue-400" />,
     path: "/discrete-rv",
@@ -222,7 +222,7 @@ const projects = [
   {
     id: "continuous-rv",
     title: "Continuous",
-    category: "Systems",
+    category: "Math",
     description: "Exploring PDFs/CDFs with interactive normal and exponential models.",
     icon: <AreaChart className="w-6 h-6 text-indigo-400" />,
     path: "/continuous-rv",
@@ -232,16 +232,36 @@ const projects = [
   {
     id: "conditional-prob",
     title: "Bridge",
-    category: "Systems",
+    category: "Math",
     description: "Visualizing Conditional Probability, Venn diagrams, and Bayes' Theorem.",
     icon: <Zap className="w-6 h-6 text-emerald-400" />,
     path: "/conditional-prob",
     color: "from-emerald-500/20 to-emerald-600/20",
     borderColor: "group-hover:border-emerald-500/50"
+  },
+  {
+    id: "math-approximations",
+    title: "Converge",
+    category: "Math",
+    description: "Compare exact Binomial/Hypergeometric probabilities against Poisson/Normal approximations.",
+    icon: <BarChart3 className="w-6 h-6 text-violet-400" />,
+    path: "/math-approximations",
+    color: "from-violet-500/20 to-violet-600/20",
+    borderColor: "group-hover:border-violet-500/50"
+  },
+  {
+    id: "rv-transforms",
+    title: "Morph",
+    category: "Math",
+    description: "Study Y=g(X) with CDF method and monotone transformation theorem checks.",
+    icon: <AreaChart className="w-6 h-6 text-teal-400" />,
+    path: "/rv-transforms",
+    color: "from-teal-500/20 to-teal-600/20",
+    borderColor: "group-hover:border-teal-500/50"
   }
 ]
 
-const categories: Category[] = ["All", "Systems", "Networking", "Frontend", "Security"]
+const categories: Category[] = ["All", "Systems", "Networking", "Frontend", "Security", "Math"]
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState<Category>("All")
