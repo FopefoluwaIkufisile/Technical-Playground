@@ -70,12 +70,12 @@ const projects = [
     borderColor: "group-hover:border-amber-500/50"
   },
   {
-    id: "index",
+    id: "indexdb",
     title: "IndexedDB",
     category: "Systems",
     description: "Comparing B-Tree search efficiency against full scans.",
     icon: <Database className="w-6 h-6 text-cyan-400" />,
-    path: "/index",
+    path: "/indexdb",
     color: "from-cyan-500/20 to-cyan-600/20",
     borderColor: "group-hover:border-cyan-500/50"
   },
