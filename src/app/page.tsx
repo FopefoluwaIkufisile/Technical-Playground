@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
-import { Binary, RefreshCw, Zap, Layers, Network, Key, Shield, Globe, Router, Wifi, Box, Radio, Cpu, Target, Lock, Database, GitBranch, Search, Filter } from "lucide-react"
+import { Binary, RefreshCw, Zap, Layers, Network, Key, Shield, Globe, Router, Wifi, Box, Radio, Cpu, Target, Lock, Database, GitBranch, Search, Filter, BarChart3, AreaChart } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 type Category = "All" | "Systems" | "Networking" | "Frontend" | "Security"
@@ -208,6 +208,36 @@ const projects = [
     path: "/protocols",
     color: "from-rose-500/20 to-rose-600/20",
     borderColor: "group-hover:border-rose-500/50"
+  },
+  {
+    id: "discrete-rv",
+    title: "Discrete",
+    category: "Systems",
+    description: "Visualizing PMFs for Binomial, Poisson, and Hypergeometric distributions.",
+    icon: <BarChart3 className="w-6 h-6 text-blue-400" />,
+    path: "/discrete-rv",
+    color: "from-blue-500/20 to-blue-600/20",
+    borderColor: "group-hover:border-blue-500/50"
+  },
+  {
+    id: "continuous-rv",
+    title: "Continuous",
+    category: "Systems",
+    description: "Exploring PDFs/CDFs with interactive normal and exponential models.",
+    icon: <AreaChart className="w-6 h-6 text-indigo-400" />,
+    path: "/continuous-rv",
+    color: "from-indigo-500/20 to-indigo-600/20",
+    borderColor: "group-hover:border-indigo-500/50"
+  },
+  {
+    id: "conditional-prob",
+    title: "Bridge",
+    category: "Systems",
+    description: "Visualizing Conditional Probability, Venn diagrams, and Bayes' Theorem.",
+    icon: <Zap className="w-6 h-6 text-emerald-400" />,
+    path: "/conditional-prob",
+    color: "from-emerald-500/20 to-emerald-600/20",
+    borderColor: "group-hover:border-emerald-500/50"
   }
 ]
 

@@ -16,6 +16,12 @@ export default function StorageSecurityPage() {
   const [isHttpOnly, setIsHttpOnly] = useState(true)
   const [sameSite, setSameSite] = useState<SameSite>("strict")
   const [isCspEnabled, setIsCspEnabled] = useState(false)
+  const [isSanitizationEnabled, setIsSanitizationEnabled] = useState(true)
+  const [reflectedInput, setReflectedInput] = useState("<script>alert('XSS')</script>")
+  const [comments, setComments] = useState<{ id: number, text: string }[]>([
+    { id: 1, text: "Great lab! Very informative." },
+    { id: 2, text: "I wonder if this is secure..." }
+  ])
   const [logs, setLogs] = useState<{ msg: string; type: "info" | "success" | "warning" | "error" | "attack"; time: string }[]>([])
 
   const addLog = useCallback((msg: string, type: "info" | "success" | "warning" | "error" | "attack" = "info") => {
@@ -66,6 +72,30 @@ export default function StorageSecurityPage() {
     await fetch("/api/storage-security/check-cookie", { method: "POST" })
     addLog("Storage buffers cleared.", "info")
     refreshState()
+  }
+
+  const testReflectedXSS = () => {
+    addLog(`Testing Reflected XSS with: ${reflectedInput}`, "info")
+    if (isSanitizationEnabled) {
+        addLog("✅ SANITIZATION: Input was cleaned. No script execution possible.", "success")
+    } else if (isCspEnabled) {
+        addLog("🛑 CSP BLOCKED: Inline script execution prevented by policy.", "success")
+    } else {
+        addLog(`❌ REFLECTED XSS SUCCESS: Script "${reflectedInput}" would execute in the victim's browser!`, "attack")
+    }
+  }
+
+  const addComment = (text: string) => {
+    const newComment = { id: Date.now(), text }
+    setComments(prev => [...prev, newComment])
+    addLog("Persistent payload stored in memory.", "info")
+    
+    // Simulate immediate trigger for the attacker to see
+    if (text.includes("<script>") || text.includes("onerror")) {
+        if (!isSanitizationEnabled && !isCspEnabled) {
+            addLog(`❌ PERSISTENT XSS DETECTED: A malicious payload was stored and will execute for all future visitors!`, "attack")
+        }
+    }
   }
 
   const simulateXSS = () => {
@@ -217,12 +247,26 @@ export default function StorageSecurityPage() {
                        <p className="text-[10px] text-gray-600 uppercase font-black">Mitigation Strategy</p>
                     </div>
                  </div>
-                 <button onClick={() => setIsCspEnabled(!isCspEnabled)} className={cn(
-                    "px-4 py-2 rounded-xl border text-[10px] font-black tracking-widest transition-all",
-                    isCspEnabled ? "bg-emerald-500/20 border-emerald-500 text-emerald-400" : "bg-white/5 border-white/5 text-gray-700"
-                 )}>
-                    {isCspEnabled ? "CSP ENABLED" : "ENABLE CSP"}
-                 </button>
+                 <div className="flex gap-2">
+                    <button onClick={() => setIsSanitizationEnabled(!isSanitizationEnabled)} className={cn(
+                       "px-4 py-2 rounded-xl border text-[10px] font-black tracking-widest transition-all",
+                       isSanitizationEnabled ? "bg-emerald-500/20 border-emerald-500 text-emerald-400" : "bg-white/5 border-white/5 text-gray-700"
+                    )}>
+                       {isSanitizationEnabled ? "SANITIZATION ON" : "SANITIZATION OFF"}
+                    </button>
+                    <button onClick={() => setIsCspEnabled(!isCspEnabled)} className={cn(
+                       "px-4 py-2 rounded-xl border text-[10px] font-black tracking-widest transition-all",
+                       isCspEnabled ? "bg-emerald-500/20 border-emerald-500 text-emerald-400" : "bg-white/5 border-white/5 text-gray-700"
+                    )}>
+                       {isCspEnabled ? "CSP ENABLED" : "ENABLE CSP"}
+                    </button>
+                 </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+                  <ExplainCard title="Reflected" desc="Malicious script is 'reflected' off a web server, such as in an error message or search result. It is not stored on the server." />
+                  <ExplainCard title="Persistent" desc="The script is permanently stored on the target server (e.g., in a database, in a comment field). It executes when a user visits the page." />
+                  <ExplainCard title="DOM-based" desc="The vulnerability exists in client-side code rather than server-side code. The script executes as a result of modifying the DOM." />
               </div>
            </div>
         </section>
@@ -254,6 +298,51 @@ export default function StorageSecurityPage() {
                        CSRF tricks your browser into sending cookies to a foreign endpoint. Prevented by <span className="font-bold text-emerald-600">SameSite</span> policies.
                     </p>
                  </div>
+
+                 <div className="space-y-4 border-t border-white/5 pt-8">
+                    <header className="flex items-center gap-2 mb-4">
+                       <Terminal className="w-4 h-4 text-rose-500" />
+                       <h4 className="text-[10px] font-black uppercase tracking-widest text-white/50">XSS Sandbox</h4>
+                    </header>
+                    
+                    <div className="space-y-4">
+                       <div className="space-y-2">
+                          <label className="text-[9px] font-bold uppercase text-gray-700">Reflected XSS Test</label>
+                          <div className="flex gap-2">
+                             <input 
+                               type="text" value={reflectedInput} onChange={(e) => setReflectedInput(e.target.value)}
+                               className="flex-1 bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-[10px] font-mono outline-none focus:border-rose-500"
+                             />
+                             <button onClick={testReflectedXSS} className="px-3 py-2 bg-rose-500 rounded-xl text-[10px] font-black">TEST</button>
+                          </div>
+                       </div>
+
+                       <div className="space-y-2">
+                          <label className="text-[9px] font-bold uppercase text-gray-700">Persistent XSS (Stored)</label>
+                          <div className="bg-white/5 border border-white/10 rounded-2xl p-4 space-y-4">
+                             <div className="space-y-2 max-h-[100px] overflow-y-auto pr-2 custom-scrollbar">
+                                {comments.map(c => (
+                                   <div key={c.id} className="p-2 bg-black/20 rounded-lg text-[9px] border border-white/5 break-all">
+                                      <span className="text-gray-600 font-bold mr-2">User:</span>
+                                      {isSanitizationEnabled ? c.text.replace(/<script>|<\/script>/g, '') : c.text}
+                                   </div>
+                                ))}
+                             </div>
+                             <input 
+                                type="text" 
+                                placeholder="Post a comment..."
+                                onKeyDown={(e) => {
+                                   if (e.key === 'Enter') {
+                                      addComment((e.target as any).value)
+                                      ;(e.target as any).value = ""
+                                   }
+                                }}
+                                className="w-full bg-black/40 border border-white/10 rounded-xl px-3 py-2 text-[10px] font-mono outline-none"
+                             />
+                          </div>
+                       </div>
+                    </div>
+                 </div>
               </div>
 
               <div className="absolute bottom-8 left-8 right-8">
@@ -264,6 +353,15 @@ export default function StorageSecurityPage() {
       </div>
     </main>
   )
+}
+
+function ExplainCard({ title, desc }: { title: string, desc: string }) {
+   return (
+      <div className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-2">
+         <h5 className="text-[10px] font-black uppercase text-rose-500">{title} XSS</h5>
+         <p className="text-[9px] text-gray-500 leading-relaxed italic">{desc}</p>
+      </div>
+   )
 }
 
 function StorageBtn({ onClick, label, color }: any) {
