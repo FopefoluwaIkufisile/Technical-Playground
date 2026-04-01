@@ -1,163 +1,300 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useState, useMemo } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { ArrowLeft, Target, Info, BarChart3, Calculator, Database, BookOpen, Settings2, Sigma, ArrowRightLeft } from "lucide-react"
 import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
-import { discrete } from "@/lib/probability"
+import { cn } from "@/lib/utils"
+import { discrete, continuous } from "@/lib/probability"
 
-type ApproxMode = "binomial-poisson" | "binomial-normal" | "hypergeometric-binomial"
+type ComparisonType = "poisson-binomial" | "normal-binomial" | "normal-poisson"
 
-export default function MathApproximationsPage() {
-  const [mode, setMode] = useState<ApproxMode>("binomial-poisson")
-  const [n, setN] = useState(40)
-  const [p, setP] = useState(0.08)
-  const [kMin, setKMin] = useState(0)
-  const [kMax, setKMax] = useState(4)
-  const [N, setPopulation] = useState(500)
-  const [K, setSuccesses] = useState(70)
-  const [sampleSize, setSampleSize] = useState(20)
+interface CompareConfig {
+  name: string
+  base: string
+  target: string
+  params: { [key: string]: { min: number, max: number, step: number, default: number, label: string } }
+  description: string
+  rule: string
+}
 
-  const result = useMemo(() => {
-    const lo = Math.min(kMin, kMax)
-    const hi = Math.max(kMin, kMax)
-    let exact = 0
-    let approx = 0
-    let note = ""
+const COMPARE_CONFIGS: Record<ComparisonType, CompareConfig> = {
+  "poisson-binomial": {
+    name: "Poisson on Binomial",
+    base: "Binomial(n, p)",
+    target: "Poisson(λ = np)",
+    params: {
+      n: { min: 10, max: 200, step: 1, default: 50, label: "Trials (n)" },
+      p: { min: 0.01, max: 0.5, step: 0.01, default: 0.05, label: "Probability (p)" }
+    },
+    rule: "Good when n is large (>20) and p is small (<0.05).",
+    description: "The Poisson distribution can approximate the Binomial when trials are many but success is rare."
+  },
+  "normal-binomial": {
+    name: "Normal on Binomial",
+    base: "Binomial(n, p)",
+    target: "Normal(μ=np, σ=√npq)",
+    params: {
+      n: { min: 10, max: 100, step: 1, default: 40, label: "Trials (n)" },
+      p: { min: 0.1, max: 0.9, step: 0.05, default: 0.5, label: "Probability (p)" }
+    },
+    rule: "Good when np > 5 AND n(1-p) > 5.",
+    description: "As n increases, the discrete Binomial 'shape' converges to the continuous Normal bell curve."
+  },
+  "normal-poisson": {
+    name: "Normal on Poisson",
+    base: "Poisson(λ)",
+    target: "Normal(μ=λ, σ=√λ)",
+    params: {
+      lambda: { min: 1, max: 50, step: 1, default: 10, label: "Rate (λ)" }
+    },
+    rule: "Good when λ > 10.",
+    description: "For large rates, the Poisson distribution becomes symmetric and matches the Normal distribution."
+  }
+}
 
-    for (let k = lo; k <= hi; k++) {
-      if (mode === "binomial-poisson") {
-        exact += discrete.binomial(k, n, p)
-        approx += discrete.poisson(k, n * p)
-        note = `Good when n is large and p is small (here np^2 = ${(n * p * p).toFixed(3)}).`
-      } else if (mode === "binomial-normal") {
-        exact += discrete.binomial(k, n, p)
-        approx += normalCDF((k + 0.5 - n * p) / Math.sqrt(n * p * (1 - p))) - normalCDF((k - 0.5 - n * p) / Math.sqrt(n * p * (1 - p)))
-        note = "Using continuity correction for a better normal approximation."
-      } else {
-        exact += discrete.hypergeometric(k, N, K, sampleSize)
-        approx += discrete.binomial(k, sampleSize, K / N)
-        note = `Good when sampling fraction n/N is small (here ${(sampleSize / N).toFixed(3)}).`
+export default function ConvergePage() {
+  const [compType, setCompType] = useState<ComparisonType>("normal-binomial")
+  const [params, setParams] = useState<Record<string, number>>(() => {
+    const p: Record<string, number> = {}
+    Object.entries(COMPARE_CONFIGS[compType].params).forEach(([k, v]) => p[k] = v.default)
+    return p
+  })
+  const [useContinuityCorrection, setUseContinuityCorrection] = useState(true)
+
+  const handleCompChange = (type: ComparisonType) => {
+    setCompType(type)
+    const newParams: Record<string, number> = {}
+    Object.entries(COMPARE_CONFIGS[type].params).forEach(([k, v]) => newParams[k] = v.default)
+    setParams(newParams)
+  }
+
+  const chartData = useMemo(() => {
+    const data: { k: number, exact: number, approx: number }[] = []
+    let range = 50
+    if (compType === "normal-binomial" || compType === "poisson-binomial") range = params.n
+    if (compType === "normal-poisson") range = Math.max(30, params.lambda * 2)
+
+    for (let k = 0; k <= range; k++) {
+      let exact = 0, approx = 0
+      
+      if (compType === "poisson-binomial") {
+          exact = discrete.binomial(k, params.n, params.p)
+          approx = discrete.poisson(k, params.n * params.p)
+      } else if (compType === "normal-binomial") {
+          exact = discrete.binomial(k, params.n, params.p)
+          const mu = params.n * params.p
+          const sigma = Math.sqrt(params.n * params.p * (1 - params.p))
+          if (useContinuityCorrection) {
+              approx = continuous.normalCDF(k + 0.5, mu, sigma) - continuous.normalCDF(k - 0.5, mu, sigma)
+          } else {
+              approx = continuous.normal(k, mu, sigma)
+          }
+      } else if (compType === "normal-poisson") {
+          exact = discrete.poisson(k, params.lambda)
+          const mu = params.lambda
+          const sigma = Math.sqrt(params.lambda)
+          if (useContinuityCorrection) {
+              approx = continuous.normalCDF(k + 0.5, mu, sigma) - continuous.normalCDF(k - 0.5, mu, sigma)
+          } else {
+              approx = continuous.normal(k, mu, sigma)
+          }
       }
+      data.push({ k, exact, approx })
     }
+    // Filter to visible range to avoid crowding
+    const threshold = 0.001
+    const firstOccur = data.findIndex(d => d.exact > threshold || d.approx > threshold)
+    const lastOccur = [...data].reverse().findIndex(d => d.exact > threshold || d.approx > threshold)
+    return data.slice(Math.max(0, firstOccur - 5), Math.max(0, data.length - lastOccur + 5))
+  }, [compType, params, useContinuityCorrection])
 
-    return {
-      lo,
-      hi,
-      exact,
-      approx,
-      absError: Math.abs(exact - approx),
-      note
-    }
-  }, [mode, n, p, kMin, kMax, N, K, sampleSize])
+  const metrics = useMemo(() => {
+    const errors = chartData.map(d => Math.abs(d.exact - d.approx))
+    const maxError = Math.max(...errors)
+    const avgError = errors.reduce((a, b) => a + b, 0) / errors.length
+    return { maxError: maxError.toFixed(4), avgError: avgError.toFixed(4) }
+  }, [chartData])
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-white p-6 sm:p-10">
-      <div className="max-w-5xl mx-auto space-y-8">
-        <nav>
-          <Link href="/" className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors">
-            <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
-          </Link>
-        </nav>
-
-        <header className="space-y-2">
-          <h1 className="text-3xl sm:text-4xl font-bold">Converge</h1>
-          <p className="text-gray-400">Exact vs approximation lab for Unit 4 and Unit 5 limit ideas.</p>
-        </header>
-
-        <section className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2 space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6">
-            <label className="block text-xs uppercase text-gray-400">Approximation type</label>
-            <select
-              value={mode}
-              onChange={(e) => setMode(e.target.value as ApproxMode)}
-              className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-sm"
-            >
-              <option value="binomial-poisson">Binomial ~ Poisson</option>
-              <option value="binomial-normal">Binomial ~ Normal (with continuity correction)</option>
-              <option value="hypergeometric-binomial">Hypergeometric ~ Binomial</option>
-            </select>
-
-            {(mode === "binomial-poisson" || mode === "binomial-normal") && (
-              <div className="grid sm:grid-cols-2 gap-4">
-                <NumberField label="n (trials)" value={n} onChange={setN} step={1} />
-                <NumberField label="p (success prob)" value={p} onChange={setP} step={0.01} min={0.01} max={0.99} />
-              </div>
-            )}
-
-            {mode === "hypergeometric-binomial" && (
-              <div className="grid sm:grid-cols-3 gap-4">
-                <NumberField label="N (population)" value={N} onChange={setPopulation} step={1} min={5} />
-                <NumberField label="K (success states)" value={K} onChange={setSuccesses} step={1} min={1} max={N} />
-                <NumberField label="n (sample size)" value={sampleSize} onChange={setSampleSize} step={1} min={1} max={N} />
-              </div>
-            )}
-
-            <div className="grid sm:grid-cols-2 gap-4">
-              <NumberField label="k min" value={kMin} onChange={setKMin} step={1} min={0} />
-              <NumberField label="k max" value={kMax} onChange={setKMax} step={1} min={0} />
-            </div>
+    <main className="min-h-screen bg-[#0a0a0a] text-white p-4 sm:p-8 md:p-12 overflow-hidden flex flex-col selection:bg-violet-500/30 font-sans">
+      <nav className="flex justify-between items-center mb-12">
+        <Link href="/" className="flex items-center gap-2 text-gray-500 hover:text-white transition-colors group">
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+          <span>Back to Dashboard</span>
+        </Link>
+        <div className="flex gap-4">
+           <div className="px-3 py-1 rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400 text-xs font-medium flex items-center gap-2">
+            <Sigma className="w-3 h-3 animate-pulse" />
+            Theory Lab: Converge
           </div>
+        </div>
+      </nav>
 
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-6 space-y-3">
-            <p className="text-xs uppercase text-gray-400">Probability window</p>
-            <p className="text-sm text-gray-300">P({result.lo} ≤ X ≤ {result.hi})</p>
-            <p className="text-sm">Exact: <span className="text-blue-300 font-mono">{result.exact.toFixed(6)}</span></p>
-            <p className="text-sm">Approx: <span className="text-violet-300 font-mono">{result.approx.toFixed(6)}</span></p>
-            <p className="text-sm">Abs error: <span className="text-amber-300 font-mono">{result.absError.toFixed(6)}</span></p>
-            <p className="text-xs text-gray-400 pt-2 border-t border-white/10">{result.note}</p>
-          </div>
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Controls */}
+        <section className="lg:col-span-1 space-y-6">
+           <div className="glass p-8 rounded-[32px] border-white/5 space-y-8">
+              <header className="space-y-1">
+                 <h1 className="text-xl sm:text-2xl font-black italic tracking-tighter">Converge</h1>
+                 <p className="text-[10px] uppercase font-bold tracking-widest text-gray-600">Distribution Limit</p>
+              </header>
+
+              <div className="space-y-6">
+                 <div className="space-y-4">
+                    <div className="space-y-2">
+                       <label className="text-[9px] font-bold uppercase text-gray-700 tracking-widest italic">Simulation Case</label>
+                       <select 
+                         value={compType} onChange={(e) => handleCompChange(e.target.value as ComparisonType)}
+                         className="w-full bg-black/40 border border-white/5 p-4 rounded-2xl font-sans text-xs outline-none focus:border-violet-500/40 transition-all appearance-none cursor-pointer"
+                       >
+                         {Object.entries(COMPARE_CONFIGS).map(([id, config]) => (
+                             <option key={id} value={id}>{config.name}</option>
+                         ))}
+                       </select>
+                    </div>
+
+                    <div className="space-y-4 pt-2">
+                       {Object.entries(COMPARE_CONFIGS[compType].params).map(([key, config]) => (
+                         <div key={key} className="space-y-2">
+                             <div className="flex justify-between items-center">
+                               <label className="text-[9px] font-bold uppercase text-gray-700">{config.label}</label>
+                               <span className="text-[10px] font-mono text-violet-400">{params[key]}</span>
+                             </div>
+                             <input 
+                               type="range" min={config.min} max={config.max} step={config.step} value={params[key]}
+                               onChange={(e) => setParams(prev => ({ ...prev, [key]: parseFloat(e.target.value) }))}
+                               className="w-full accent-violet-500 h-1 bg-white/5 rounded-lg appearance-none cursor-pointer"
+                             />
+                         </div>
+                       ))}
+                    </div>
+
+                    {(compType === "normal-binomial" || compType === "normal-poisson") && (
+                        <button 
+                          onClick={() => setUseContinuityCorrection(!useContinuityCorrection)}
+                          className={cn(
+                            "w-full p-4 rounded-2xl border flex items-center justify-between transition-all group",
+                            useContinuityCorrection ? "bg-violet-500/20 border-violet-500/40" : "bg-white/5 border-white/5 opacity-50"
+                          )}
+                        >
+                           <div className="text-left">
+                              <p className="text-[10px] font-black uppercase text-violet-400">Continuity Correction</p>
+                              <p className="text-[8px] text-gray-600 font-mono italic">{"P(X=k) ≈ P(k-0.5 < Y < k+0.5)"}</p>
+                           </div>
+                           <div className={cn("w-2 h-2 rounded-full", useContinuityCorrection ? "bg-violet-400 shadow-[0_0_8px_#a78bfa]" : "bg-gray-800")} />
+                        </button>
+                    )}
+                 </div>
+              </div>
+           </div>
+
+           <div className="glass p-8 rounded-[32px] border-violet-500/10 space-y-4">
+              <div className="flex items-center gap-2">
+                 <BookOpen className="w-3 h-3 text-violet-500" />
+                 <h3 className="text-[10px] font-bold uppercase text-gray-500 tracking-widest italic">Heuristic Rule</h3>
+              </div>
+              <p className="text-sm font-light leading-relaxed text-gray-300 italic">{COMPARE_CONFIGS[compType].rule}</p>
+           </div>
+        </section>
+
+        {/* Visualization */}
+        <section className="lg:col-span-3 space-y-6">
+            <div className="glass rounded-[40px] border-white/5 p-6 sm:p-10 min-h-[450px] relative flex flex-col gap-8 overflow-hidden">
+              <div className="absolute top-0 right-0 p-12 opacity-[0.02] pointer-events-none">
+                 <ArrowRightLeft className="w-64 h-64 text-violet-500" />
+              </div>
+
+              <div className="relative z-10 flex flex-col gap-6 h-full flex-1">
+                  <header className="flex justify-between items-center">
+                     <div className="flex items-center gap-3">
+                        <BarChart3 className="w-4 h-4 text-violet-500" />
+                        <h3 className="text-sm font-black italic uppercase tracking-widest">Convergence Delta</h3>
+                     </div>
+                     <div className="grid grid-cols-2 gap-8">
+                        <StatItem label="Exact" value={COMPARE_CONFIGS[compType].base} color="text-white" />
+                        <StatItem label="Approx" value={COMPARE_CONFIGS[compType].target} color="text-violet-400" />
+                     </div>
+                  </header>
+
+                  {/* Chart */}
+                  <div className="flex-1 min-h-[300px] w-full relative flex items-end justify-between px-2 sm:px-10">
+                      {chartData.map((d, i) => {
+                         const maxVal = Math.max(...chartData.map(cd => Math.max(cd.exact, cd.approx)), 0.1)
+                         return (
+                            <div key={i} className="flex-1 flex flex-col items-center group max-w-[50px]">
+                               <div className="w-full relative h-[250px] flex items-end">
+                                  {/* Exact Bar */}
+                                  <motion.div 
+                                    initial={{ height: 0 }}
+                                    animate={{ height: `${(d.exact / maxVal) * 100}%` }}
+                                    className="w-[70%] mx-auto bg-white/20 border-x border-t border-white/40 rounded-t-lg z-10"
+                                  />
+                                  {/* Approx Line/Bar Overlay */}
+                                  <motion.div 
+                                    initial={{ height: 0 }}
+                                    animate={{ height: `${(d.approx / maxVal) * 100}%` }}
+                                    className="absolute inset-x-0 bottom-0 bg-violet-500/40 border-t-2 border-violet-400 rounded-t-lg z-0"
+                                  />
+                               </div>
+                               <span className="mt-4 text-[9px] font-mono text-gray-700 group-hover:text-white transition-colors">{d.k}</span>
+                            </div>
+                         )
+                      })}
+                      {/* Legend Overlay */}
+                      <div className="absolute top-0 right-0 p-6 flex flex-col gap-2">
+                         <div className="flex items-center gap-2">
+                             <div className="w-3 h-3 bg-white/30 border border-white/50" />
+                             <span className="text-[8px] font-bold text-gray-500 uppercase">Exact (Discrete)</span>
+                         </div>
+                         <div className="flex items-center gap-2">
+                             <div className="w-3 h-3 bg-violet-500/50 border-t-2 border-violet-400" />
+                             <span className="text-[8px] font-bold text-gray-500 uppercase">Approx (Continuous)</span>
+                         </div>
+                      </div>
+                  </div>
+              </div>
+           </div>
+
+           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="glass p-8 rounded-[32px] border-white/5 space-y-4">
+                 <div className="flex items-center gap-3">
+                    <Database className="w-5 h-5 text-violet-500" />
+                    <h4 className="text-xs font-black uppercase tracking-widest text-white/50">Error Distribution</h4>
+                 </div>
+                 <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-1">
+                        <p className="text-[9px] font-black uppercase text-gray-700">Max Delta</p>
+                        <p className="text-2xl font-black italic text-violet-400">{metrics.maxError}</p>
+                    </div>
+                    <div className="space-y-1">
+                        <p className="text-[9px] font-black uppercase text-gray-700">Mean Abs Error</p>
+                        <p className="text-2xl font-black italic text-white/40">{metrics.avgError}</p>
+                    </div>
+                 </div>
+              </div>
+
+              <div className="glass p-8 rounded-[32px] border-white/5 space-y-4">
+                 <div className="flex items-center gap-3">
+                    <Settings2 className="w-5 h-5 text-violet-500" />
+                    <h4 className="text-xs font-black uppercase tracking-widest text-white/50">Why approximate?</h4>
+                 </div>
+                 <p className="text-sm font-light leading-relaxed text-gray-300 italic">
+                    Exact calculations for Large Factorials (n!) are computationally expensive. These limits simplify complex probability estimates into standard Normal areas.
+                 </p>
+              </div>
+           </div>
         </section>
       </div>
     </main>
   )
 }
 
-function NumberField({
-  label,
-  value,
-  onChange,
-  step,
-  min,
-  max
-}: {
-  label: string
-  value: number
-  onChange: (v: number) => void
-  step?: number
-  min?: number
-  max?: number
-}) {
+function StatItem({ label, value, color }: { label: string, value: string, color: string }) {
   return (
-    <label className="space-y-1 block">
-      <span className="text-xs uppercase text-gray-400">{label}</span>
-      <input
-        type="number"
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        step={step}
-        min={min}
-        max={max}
-        className="w-full bg-black/40 border border-white/10 rounded-xl p-2 text-sm"
-      />
-    </label>
+    <div className="text-right">
+       <p className="text-[9px] font-black uppercase tracking-widest text-gray-700 italic">{label}</p>
+       <p className={cn("text-xs font-bold leading-none mt-1", color)}>{value}</p>
+    </div>
   )
-}
-
-function normalCDF(x: number): number {
-  return 0.5 * (1 + erf(x / Math.sqrt(2)))
-}
-
-function erf(x: number): number {
-  const a1 = 0.254829592
-  const a2 = -0.284496736
-  const a3 = 1.421413741
-  const a4 = -1.453152027
-  const a5 = 1.061405429
-  const p = 0.3275911
-  const sign = x < 0 ? -1 : 1
-  const ax = Math.abs(x)
-  const t = 1 / (1 + p * ax)
-  const y = 1 - (((((a5 * t + a4) * t + a3) * t + a2) * t + a1) * t) * Math.exp(-ax * ax)
-  return sign * y
 }
