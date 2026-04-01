@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
-import { Binary, RefreshCw, Zap, Layers, Network, Key, Shield, Globe, Router, Wifi, Box, Radio, Cpu, Target, Lock, Database, GitBranch, Search, Filter, BarChart3, AreaChart } from "lucide-react"
+import { Binary, RefreshCw, Zap, Layers, Network, Key, Shield, Globe, Router, Wifi, Box, Radio, Cpu, Target, Lock, Database, GitBranch, Search, Filter, BarChart3, AreaChart, GraduationCap } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 type Category = "All" | "Systems" | "Networking" | "Frontend" | "Security" | "Math"
@@ -258,6 +258,16 @@ const projects = [
     path: "/rv-transforms",
     color: "from-teal-500/20 to-teal-600/20",
     borderColor: "group-hover:border-teal-500/50"
+  },
+  {
+    id: "stat-mastery",
+    title: "Mastery",
+    category: "Math",
+    description: "The ultimate STAT 2440 preparer. Decision trainer, practice engine, and tutor.",
+    icon: <GraduationCap className="w-6 h-6 text-indigo-400" />,
+    path: "/stat-mastery",
+    color: "from-indigo-500/20 to-indigo-600/20",
+    borderColor: "group-hover:border-indigo-500/50"
   }
 ]
 
