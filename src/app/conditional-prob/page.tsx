@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { ArrowLeft, Target, Info, Calculator, Database, BookOpen, Layers, Zap, GitBranch, RefreshCw } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import MathRenderer from "@/components/Math"
 
 export default function ConditionalProbPage() {
   const [probA, setProbA] = useState(0.6)
@@ -77,8 +78,8 @@ export default function ConditionalProbPage() {
                  <h3 className="text-[10px] font-bold uppercase text-gray-500 tracking-widest italic">Inference Engine</h3>
               </div>
               <div className="space-y-4">
-                 <FormulaItem label="P(A|B)" result={condAB} formula={`P(A ∩ B) / P(B) = ${validIntersection.toFixed(2)} / ${probB.toFixed(2)}`} />
-                 <FormulaItem label="P(B|A)" result={condBA} formula={`P(A ∩ B) / P(A) = ${validIntersection.toFixed(2)} / ${probA.toFixed(2)}`} />
+                 <FormulaItem label="P(A|B)" result={condAB} formula={`P(A|B) = \\frac{P(A \\cap B)}{P(B)} = \\frac{${validIntersection.toFixed(2)}}{${probB.toFixed(2)}}`} />
+                 <FormulaItem label="P(B|A)" result={condBA} formula={`P(B|A) = \\frac{P(A \\cap B)}{P(A)} = \\frac{${validIntersection.toFixed(2)}}{${probA.toFixed(2)}}`} />
               </div>
            </div>
         </section>
@@ -163,8 +164,8 @@ export default function ConditionalProbPage() {
                     <h4 className="text-xs font-black uppercase tracking-widest text-white/50">Core Definitions</h4>
                  </div>
                  <div className="space-y-4 text-sm font-light text-gray-400">
-                    <p><span className="text-emerald-400 font-bold">Intersection:</span> P(A ∩ B) represents both events happening simultaneously.</p>
-                    <p><span className="text-blue-400 font-bold">Marginal:</span> P(A) and P(B) are the probabilities of single events regardless of others.</p>
+                    <p><MathRenderer tex="\text{Intersection: } P(A \cap B)" className="text-emerald-400 font-bold mr-2" /> represents both events happening simultaneously.</p>
+                    <p><MathRenderer tex="\text{Marginal: } P(A), P(B)" className="text-blue-400 font-bold mr-2" /> are the probabilities of single events regardless of others.</p>
                  </div>
               </div>
 
@@ -173,9 +174,9 @@ export default function ConditionalProbPage() {
                     <Calculator className="w-5 h-5 text-emerald-500" />
                     <h4 className="text-xs font-black uppercase tracking-widest text-emerald-400/50">Bayes' Theorem</h4>
                  </div>
-                 <p className="text-[11px] font-mono text-emerald-300 leading-relaxed italic">
-                    P(A|B) = [ P(B|A) * P(A) ] / P(B)
-                 </p>
+                 <div className="flex justify-center py-4">
+                   <MathRenderer tex="P(A|B) = \frac{P(B|A) P(A)}{P(B)}" block className="text-emerald-300" />
+                 </div>
                  <p className="text-sm font-light text-gray-300 leading-relaxed italic">
                     This fundamental law allows us to "flip" conditional probabilities. If we know P(B|A), we can find P(A|B).
                  </p>
@@ -210,7 +211,9 @@ function FormulaItem({ label, result, formula }: any) {
           <span className="text-[10px] font-black uppercase text-emerald-400">{label}</span>
           <span className="text-base font-black italic text-white">{(result * 100).toFixed(1)}%</span>
        </div>
-       <p className="text-[8px] font-mono text-gray-700 italic border-t border-white/5 pt-2 mt-1">{formula}</p>
+       <div className="border-t border-white/5 pt-2 mt-1">
+          <MathRenderer tex={formula} className="text-[9px] text-gray-400 italic" />
+       </div>
     </div>
   )
 }

@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { ArrowLeft, Brain, Target, BookOpen, GraduationCap, ClipboardCheck, Timer, Zap, Lightbulb, HelpCircle, ChevronRight, Calculator, RefreshCw, AlertCircle, CheckCircle2, Sigma, Database } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import MathRenderer from "@/components/Math"
 
 type Tab = "concepts" | "trainer" | "practice" | "test"
 
@@ -88,7 +89,7 @@ function ConceptSection() {
                 icon={<Target className="text-rose-400" />}
                 intuition="Sampling without replacement from a finite population."
                 trigger="Check if the population size changes as you pick items."
-                formula="P(X=k) = (K C k * (N-K) C (n-k)) / (N C n)"
+                formula="P(X=k) = \frac{\binom{K}{k}\binom{N-K}{n-k}}{\binom{N}{n}}"
                 examples={["Picking card hands", "Selecting defective bulbs from a batch"]}
             />
             <ConceptCard 
@@ -96,7 +97,7 @@ function ConceptSection() {
                 icon={<Zap className="text-indigo-400" />}
                 intuition="Counting successes in 'n' independent, identical yes/no trials."
                 trigger="Fixed number of trials, constant probability, independent."
-                formula="P(X=k) = (n C k) * p^k * q^(n-k)"
+                formula="P(X=k) = \binom{n}{k} p^k q^{n-k}"
                 examples={["Flipping a coin 10 times", "Passing rate of 100 students"]}
             />
             <ConceptCard 
@@ -104,7 +105,7 @@ function ConceptSection() {
                 icon={<RefreshCw className="text-cyan-400" />}
                 intuition="Number of trials needed to get the FIRST success."
                 trigger="Wait for the first... (e.g. roll until you get a 6)."
-                formula="P(X=k) = (1-p)^(k-1) * p"
+                formula="P(X=k) = (1-p)^{k-1} p"
                 examples={["Rolling a die until a 6", "Buying lottery tickets until you win"]}
             />
             <ConceptCard 
@@ -112,7 +113,7 @@ function ConceptSection() {
                 icon={<Timer className="text-amber-400" />}
                 intuition="Counting random events over a fixed interval of time or space."
                 trigger="Look for a rate (λ) like '3 calls per hour'."
-                formula="P(X=k) = (e^(-λ) * λ^k) / k!"
+                formula="P(X=k) = \frac{e^{-\lambda} \lambda^k}{k!}"
                 examples={["Website traffic", "Customer arrivals", "Typos per page"]}
             />
             <ConceptCard 
@@ -120,7 +121,7 @@ function ConceptSection() {
                 icon={<Sigma className="text-sky-400" />}
                 intuition="The 'Bell Curve' that many natural phenomena follow. Symmetric."
                 trigger="Central Limit Theorem, heights, test scores, measurement errors."
-                formula="f(x) = (1/σ√2π) * e^(-(x-μ)²/2σ²)"
+                formula="f(x) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x-\mu)^2}{2\sigma^2}}"
                 examples={["IQ scores", "Adult heights", "Filling machines variation"]}
                 type="Continuous"
             />
@@ -129,7 +130,7 @@ function ConceptSection() {
                 icon={<Timer className="text-orange-400" />}
                 intuition="The amount of time BETWEEN Poisson events. Memoryless."
                 trigger="Time until next... Wait times. Radioactive decay."
-                formula="f(x) = λ * e^(-λx)"
+                formula="f(x) = \lambda e^{-\lambda x}"
                 examples={["Time between customer arrivals", "Life of an electronic part"]}
                 type="Continuous"
             />
@@ -138,7 +139,7 @@ function ConceptSection() {
                 icon={<RefreshCw className="text-emerald-400" />}
                 intuition="Finding the distribution of a variable Y derived from X (e.g., Y = X²)."
                 trigger="Formula Y = g(X) given, need to find fY(y)."
-                formula="fY(y) = fX(g⁻¹(y)) * |d/dy g⁻¹(y)|"
+                formula="f_Y(y) = f_X(g^{-1}(y)) \cdot \left| \frac{d}{dy} g^{-1}(y) \right|"
                 examples={["Area of a circle given radius distribution", "Profit from sales X"]}
             />
             <ConceptCard 
@@ -146,7 +147,7 @@ function ConceptSection() {
                 icon={<Database className="text-violet-400" />}
                 intuition="PDF is the slope; CDF is the running total area (accumulated prob)."
                 trigger="P(a < X < b) = F(b) - F(a). PDF is the derivative of CDF."
-                formula="F(x) = ∫ f(t) dt from -∞ to x"
+                formula="F(x) = \int_{-\infty}^{x} f(t) dt"
                 examples={["Finding percentiles", "Calculating median", "Finding P(X < 5)"]}
                 type="Fundamental"
             />
@@ -299,10 +300,10 @@ function PracticeSection() {
                 title: "Hypergeometric (Item Selection)",
                 text: `A warehouse has ${N} units, ${K} of which are slightly defective. If you select ${n} units at random without replacement, what is the probability that exactly ${k} are defective?`,
                 steps: [
-                    { t: "Identify Parameters", d: `N=${N} (Total), K=${K} (Defective in pop), n=${n} (Sample), k=${k} (Target successes).` },
-                    { t: "Set up Formula", d: `P(X=k) = [ (K C k) * (N-K C n-k) ] / (N C n)` },
-                    { t: "Plug in Values", d: `P(X=${k}) = [ (${K} C ${k}) * (${N-K} C ${n-k}) ] / (${N} C ${n})` },
-                    { t: "Final Calculation", d: "Calculate the combinations and divide. Ensure k ≤ K and n-k ≤ N-K." }
+                    { t: "Identify Parameters", d: `N=${N}, K=${K}, n=${n}, k=${k}.` },
+                    { t: "Set up Formula", d: `P(X=k) = \\frac{\\binom{K}{k}\\binom{N-K}{n-k}}{\\binom{N}{n}}` },
+                    { t: "Plug in Values", d: `P(X=${k}) = \\frac{\\binom{${K}}{${k}}\\binom{${N-K}}{${n-k}}}{\\binom{${N}}{${n}}}` },
+                    { t: "Final Calculation", d: "Calculate the combinations and divide. Ensure k \\le K and n-k \\le N-K." }
                 ]
             })
         } else if (selectedType.includes("poisson")) {
@@ -313,9 +314,9 @@ function PracticeSection() {
                 title: "Poisson (Time Intervals)",
                 text: `Customers arrive at a shop at a rate of ${rate} per hour. What is the probability that exactly ${k} customers arrive in the next ${time} hours?`,
                 steps: [
-                    { t: "Adjust Rate (λ)", d: `Base rate = ${rate}/hr. For ${time} hours, λ = ${rate} * ${time} = ${rate * time}.` },
-                    { t: "Set up Formula", d: `P(X=k) = (e^(-λ) * λ^k) / k!` },
-                    { t: "Plug in Values", d: `P(X=${k}) = (e^(-${rate * time}) * ${rate * time}^${k}) / ${k}!` },
+                    { t: "Adjust Rate (λ)", d: `\\lambda = ${rate} \\times ${time} = ${rate * time}.` },
+                    { t: "Set up Formula", d: `P(X=k) = \\frac{e^{-\\lambda} \\lambda^k}{k!}` },
+                    { t: "Plug in Values", d: `P(X=${k}) = \\frac{e^{-${rate * time}} ${rate * time}^{k}}{${k}!}` },
                     { t: "Final Calculation", d: "Compute the exponential and factorial components." }
                 ]
             })
@@ -326,9 +327,9 @@ function PracticeSection() {
                 title: "Transformation (Y=g(X))",
                 text: `Let X be a continuous RV with PDF fX(x). Find the PDF of Y = ${mult}X + ${add}.`,
                 steps: [
-                    { t: "Find Inverse Mapping", d: `y = ${mult}x + ${add}  =>  x = (y - ${add}) / ${mult}` },
-                    { t: "Calculate Derivative", d: `dx/dy = d/dy [ (y - ${add}) / ${mult} ] = 1/${mult}` },
-                    { t: "Transformation Theorem", d: `fY(y) = fX( (y - ${add})/${mult} ) * |1/${mult}|` },
+                    { t: "Find Inverse Mapping", d: `y = ${mult}x + ${add} \\implies x = \\frac{y - ${add}}{${mult}}` },
+                    { t: "Calculate Derivative", d: `\\frac{dx}{dy} = \\frac{d}{dy} \\left[ \\frac{y - ${add}}{${mult}} \\right] = \\frac{1}{${mult}}` },
+                    { t: "Transformation Theorem", d: `f_Y(y) = f_X\\left( \\frac{y - ${add}}{${mult}} \\right) \\cdot \\left| \\frac{1}{${mult}} \\right|` },
                     { t: "Conclusion", d: "Plug the inverse into the original fX and multiply by the Jacobian." }
                 ]
             })
@@ -340,9 +341,9 @@ function PracticeSection() {
                 title: "Binomial (Independent Trials)",
                 text: `The probability that a seed germinates is ${p}. If you plant ${n} independent seeds, what is the probability that exactly ${k} germinate?`,
                 steps: [
-                    { t: "Identify Parameters", d: `n=${n} trials, p=${p} success prob, k=${k} targeted successes.` },
-                    { t: "Set up Formula", d: `P(X=k) = (n C k) * p^k * (1-p)^(n-k)` },
-                    { t: "Plug in Values", d: `P(X=${k}) = (${n} C ${k}) * (${p})^${k} * (1-${p})^(${n}-${k})` },
+                    { t: "Identify Parameters", d: `n=${n}, p=${p}, k=${k}.` },
+                    { t: "Set up Formula", d: `P(X=k) = \\binom{n}{k} p^k (1-p)^{n-k}` },
+                    { t: "Plug in Values", d: `P(X=${k}) = \\binom{${n}}{${k}} (${p})^${k} (1-${p})^{${n-k}}` },
                     { t: "Final Calculation", d: "Calculate the combination coefficient and exponents." }
                 ]
             })
@@ -407,10 +408,10 @@ function PracticeSection() {
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         animate={{ opacity: 1, scale: 1 }}
                                         key={i} 
-                                        className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-1"
+                                        className="p-4 rounded-2xl bg-white/5 border border-white/5 space-y-2"
                                     >
                                         <p className="text-[9px] font-black uppercase text-indigo-400">{s.t}</p>
-                                        <p className="text-[11px] font-mono text-gray-400 leading-relaxed">{s.d}</p>
+                                        <MathRenderer tex={s.d} className="text-[11px] font-mono text-gray-400" />
                                     </motion.div>
                                 ))}
                             </div>
@@ -591,8 +592,8 @@ function ConceptCard({ title, icon, intuition, trigger, formula, examples, type 
                     <p className="text-xs font-bold text-indigo-400">{trigger}</p>
                 </div>
                 
-                <div className="bg-black/40 p-4 rounded-2xl border border-white/5 font-mono text-[10px] text-gray-300">
-                    {formula}
+                <div className="bg-black/40 p-4 rounded-2xl border border-white/5 flex justify-center py-6">
+                    <MathRenderer tex={formula} block />
                 </div>
             </div>
 

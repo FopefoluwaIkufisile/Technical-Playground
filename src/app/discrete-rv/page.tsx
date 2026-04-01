@@ -6,6 +6,7 @@ import { ArrowLeft, Target, Info, BarChart3, Calculator, Database, BookOpen, Set
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { discrete, factorial } from "@/lib/probability"
+import MathRenderer from "@/components/Math"
 
 type DistributionType = "bernoulli" | "binomial" | "poisson" | "geometric" | "hypergeometric"
 
@@ -29,19 +30,19 @@ const DIST_CONFIGS: Record<DistributionType, DistConfig> = {
       n: { min: 1, max: 50, step: 1, default: 10, label: "Trials (n)" },
       p: { min: 0, max: 1, step: 0.05, default: 0.5, label: "Probability (p)" }
     },
-    formula: "P(X=k) = (nCk) * p^k * (1-p)^{n-k}",
+    formula: "P(X=k) = \\binom{n}{k} p^k (1-p)^{n-k}",
     description: "Models the number of successes in n independent Bernoulli trials."
   },
   poisson: {
     name: "Poisson",
     params: { lambda: { min: 0.1, max: 20, step: 0.1, default: 4, label: "Rate (λ)" } },
-    formula: "P(X=k) = (λ^k * e^{-λ}) / k!",
+    formula: "P(X=k) = \\frac{\\lambda^k e^{-\\lambda}}{k!}",
     description: "Expresses the probability of a given number of events occurring in a fixed interval of time or space."
   },
   geometric: {
     name: "Geometric",
     params: { p: { min: 0.05, max: 1, step: 0.05, default: 0.3, label: "Probability (p)" } },
-    formula: "P(X=k) = (1-p)^{k-1} * p",
+    formula: "P(X=k) = (1-p)^{k-1} p",
     description: "The number of trials needed to get the first success."
   },
   hypergeometric: {
@@ -51,7 +52,7 @@ const DIST_CONFIGS: Record<DistributionType, DistConfig> = {
       K: { min: 1, max: 50, step: 1, default: 10, label: "Successes in Pop (K)" },
       n: { min: 1, max: 50, step: 1, default: 10, label: "Sample Size (n)" }
     },
-    formula: "P(X=k) = [(Kck) * (N-K c n-k)] / (Ncn)",
+    formula: "P(X=k) = \\frac{\\binom{K}{k}\\binom{N-K}{n-k}}{\\binom{N}{n}}",
     description: "Sampling successes from a population without replacement."
   }
 }
@@ -226,9 +227,9 @@ export default function DiscreteRVPage() {
                  <h3 className="text-[10px] font-bold uppercase text-gray-500 tracking-widest">Logic Breakdown</h3>
               </div>
               <div className="space-y-3">
-                 <div className="p-4 bg-blue-500/5 border border-blue-500/10 rounded-2xl space-y-2">
-                    <p className="text-[10px] font-mono text-blue-400 font-bold">{isSandboxMode ? "Empirical PMF" : DIST_CONFIGS[distType].formula}</p>
-                    <p className="text-[9px] text-gray-400 italic leading-snug">{isSandboxMode ? "Calculated from your raw input data stream." : DIST_CONFIGS[distType].description}</p>
+                 <div className="p-4 bg-blue-500/5 border border-blue-500/10 rounded-2xl flex flex-col items-center gap-3">
+                    <MathRenderer tex={isSandboxMode ? "\\text{Empirical PMF}" : DIST_CONFIGS[distType].formula} className="text-blue-400 font-bold" />
+                    <p className="text-[9px] text-gray-400 italic leading-snug text-center">{isSandboxMode ? "Calculated from your raw input data stream." : DIST_CONFIGS[distType].description}</p>
                  </div>
               </div>
            </div>

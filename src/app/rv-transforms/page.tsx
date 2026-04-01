@@ -6,6 +6,7 @@ import { ArrowLeft, Target, Info, AreaChart, Calculator, Database, BookOpen, Set
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { continuous } from "@/lib/probability"
+import MathRenderer from "@/components/Math"
 
 type TransformType = "linear" | "square" | "exponential" | "log"
 type BaseDist = "uniform" | "normal" | "exponential"
@@ -26,31 +27,31 @@ const MORPH_CONFIGS: Record<TransformType, MorphConfig> = {
     g_inv: (y) => [(y - 1) / 2],
     deriv_inv: (y) => 0.5,
     label: "Y = 2X + 1",
-    formula: "f_Y(y) = f_X((y-1)/2) * |1/2|"
+    formula: "f_Y(y) = f_X\\left(\\frac{y-1}{2}\\right) \\cdot \\left|\\frac{1}{2}\\right|"
   },
   square: {
     name: "Quadratic",
     g: (x) => x * x,
     g_inv: (y) => y < 0 ? [] : [Math.sqrt(y), -Math.sqrt(y)],
     deriv_inv: (y) => y <= 0 ? 0 : 1 / (2 * Math.sqrt(y)),
-    label: "Y = X²",
-    formula: "f_Y(y) = [f_X(√y) + f_X(-√y)] * |1/(2√y)|"
+    label: "Y = X^2",
+    formula: "f_Y(y) = \\left[f_X(\\sqrt{y}) + f_X(-\\sqrt{y})\\right] \\cdot \\left|\\frac{1}{2\\sqrt{y}}\\right|"
   },
   exponential: {
     name: "Exponential",
     g: (x) => Math.exp(x),
     g_inv: (y) => y <= 0 ? [] : [Math.log(y)],
     deriv_inv: (y) => y <= 0 ? 0 : 1 / y,
-    label: "Y = eˣ",
-    formula: "f_Y(y) = f_X(ln y) * |1/y|"
+    label: "Y = e^X",
+    formula: "f_Y(y) = f_X(\\ln y) \\cdot \\left|\\frac{1}{y}\\right|"
   },
   log: {
     name: "Logarithmic",
     g: (x) => x <= 0 ? -10 : Math.log(x),
     g_inv: (y) => [Math.exp(y)],
     deriv_inv: (y) => Math.exp(y),
-    label: "Y = ln(X)",
-    formula: "f_Y(y) = f_X(eʸ) * |eʸ|"
+    label: "Y = \\ln(X)",
+    formula: "f_Y(y) = f_X(e^y) \\cdot |e^y|"
   }
 }
 
@@ -159,7 +160,7 @@ export default function MorphPage() {
                                         transType === id ? "bg-teal-500/20 border-teal-500 text-teal-400" : "bg-white/5 border-white/5 text-gray-700 hover:text-white hover:bg-white/5"
                                     )}
                                 >
-                                    {config.label}
+                                    <MathRenderer tex={config.label} />
                                 </button>
                           ))}
                        </div>
@@ -173,7 +174,9 @@ export default function MorphPage() {
                  <BookOpen className="w-3 h-3 text-teal-500" />
                  <h3 className="text-[10px] font-bold uppercase text-gray-500 tracking-widest italic">Transfer Theorem</h3>
               </div>
-              <p className="text-[11px] font-mono text-teal-400 bg-black/40 p-3 rounded-xl">{MORPH_CONFIGS[transType].formula}</p>
+              <div className="bg-black/40 p-4 rounded-xl flex justify-center py-6">
+                <MathRenderer tex={MORPH_CONFIGS[transType].formula} block />
+              </div>
               <p className="text-[9px] text-gray-500 italic leading-relaxed">
                  Probability mass is neither created nor destroyed; it is stretched or squeezed by the absolute derivative of the inverse mapping.
               </p>
@@ -185,7 +188,7 @@ export default function MorphPage() {
            {/* Top: X PDF */}
            <div className="glass rounded-[40px] border-white/5 p-8 relative flex flex-col gap-4">
                <div className="flex justify-between items-center relative z-10">
-                  <h3 className="text-[10px] font-black uppercase tracking-widest text-teal-500">Source PDF: f_X(x)</h3>
+                  <h3 className="text-[10px] font-black uppercase tracking-widest text-teal-500">Source PDF: <MathRenderer tex="f_X(x)" /></h3>
                   <span className="text-[10px] font-mono text-gray-700 italic">Domain: (-∞, ∞)</span>
                </div>
                <div className="flex-1 relative x-chart mt-4">
@@ -218,7 +221,7 @@ export default function MorphPage() {
            {/* Bottom: Y PDF */}
            <div className="glass rounded-[40px] border-white/5 p-8 relative flex flex-col gap-4">
                <div className="flex justify-between items-center relative z-10">
-                  <h3 className="text-[10px] font-black uppercase tracking-widest text-teal-500">Result PDF: f_Y(y)</h3>
+                  <h3 className="text-[10px] font-black uppercase tracking-widest text-teal-500">Result PDF: <MathRenderer tex="f_Y(y)" /></h3>
                   <span className="text-[10px] font-mono text-gray-700 italic">Transformed Range</span>
                </div>
                <div className="flex-1 relative y-chart mt-4">

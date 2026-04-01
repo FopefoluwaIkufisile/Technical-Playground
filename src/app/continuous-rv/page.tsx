@@ -6,6 +6,7 @@ import { ArrowLeft, Target, Info, AreaChart, Calculator, Database, BookOpen, Set
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { continuous } from "@/lib/probability"
+import MathRenderer from "@/components/Math"
 
 type DistributionType = "uniform" | "exponential" | "normal"
 
@@ -23,13 +24,13 @@ const DIST_CONFIGS: Record<DistributionType, DistConfig> = {
       a: { min: -10, max: 10, step: 1, default: 0, label: "Lower Bound (a)" },
       b: { min: -10, max: 20, step: 1, default: 10, label: "Upper Bound (b)" }
     },
-    formula: "f(x) = 1 / (b-a) for a <= x <= b",
+    formula: "f(x) = \\frac{1}{b-a} \\text{ for } a \\le x \\le b",
     description: "All outcomes in a finite interval [a, b] are equally likely."
   },
   exponential: {
     name: "Exponential",
     params: { lambda: { min: 0.1, max: 5, step: 0.1, default: 1, label: "Rate (λ)" } },
-    formula: "f(x) = λe^{-λx} for x >= 0",
+    formula: "f(x) = \\lambda e^{-\\lambda x} \\text{ for } x \\ge 0",
     description: "Describes the time between events in a Poisson process (events happening at a constant rate)."
   },
   normal: {
@@ -38,7 +39,7 @@ const DIST_CONFIGS: Record<DistributionType, DistConfig> = {
       mu: { min: -20, max: 20, step: 1, default: 0, label: "Mean (μ)" },
       sigma: { min: 0.5, max: 10, step: 0.5, default: 2, label: "Std Dev (σ)" }
     },
-    formula: "f(x) = [1 / (σ√2π)] * e^{-0.5((x-μ)/σ)^2}",
+    formula: "f(x) = \\frac{1}{\\sigma\\sqrt{2\\pi}} e^{-\\frac{1}{2}\\left(\\frac{x-\\mu}{\\sigma}\\right)^2}",
     description: "The classic bell curve. Central to the CLT and many natural phenomena."
   }
 }
@@ -254,7 +255,9 @@ export default function ContinuousRVPage() {
                     <Database className="w-5 h-5 text-indigo-500" />
                     <h4 className="text-xs font-black uppercase tracking-widest text-white/50">Mathematical Model</h4>
                  </div>
-                 <p className="text-[11px] font-mono text-indigo-400 bg-black/40 p-3 rounded-xl">{DIST_CONFIGS[distType].formula}</p>
+                  <div className="bg-black/40 p-4 rounded-xl flex justify-center py-6">
+                    <MathRenderer tex={DIST_CONFIGS[distType].formula} block />
+                  </div>
                  <p className="text-sm font-light leading-relaxed text-gray-300 italic">
                     {DIST_CONFIGS[distType].description}
                  </p>

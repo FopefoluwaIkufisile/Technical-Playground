@@ -6,6 +6,7 @@ import { ArrowLeft, Target, Info, BarChart3, Calculator, Database, BookOpen, Set
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { discrete, continuous } from "@/lib/probability"
+import MathRenderer from "@/components/Math"
 
 type ComparisonType = "poisson-binomial" | "normal-binomial" | "normal-poisson"
 
@@ -21,34 +22,34 @@ interface CompareConfig {
 const COMPARE_CONFIGS: Record<ComparisonType, CompareConfig> = {
   "poisson-binomial": {
     name: "Poisson on Binomial",
-    base: "Binomial(n, p)",
-    target: "Poisson(λ = np)",
+    base: "X \\sim \\text{Binomial}(n, p)",
+    target: "X \\approx \\text{Poisson}(\\lambda = np)",
     params: {
       n: { min: 10, max: 200, step: 1, default: 50, label: "Trials (n)" },
       p: { min: 0.01, max: 0.5, step: 0.01, default: 0.05, label: "Probability (p)" }
     },
-    rule: "Good when n is large (>20) and p is small (<0.05).",
+    rule: "n \\ge 20, p \\le 0.05",
     description: "The Poisson distribution can approximate the Binomial when trials are many but success is rare."
   },
   "normal-binomial": {
     name: "Normal on Binomial",
-    base: "Binomial(n, p)",
-    target: "Normal(μ=np, σ=√npq)",
+    base: "X \\sim \\text{Binomial}(n, p)",
+    target: "X \\approx N(\\mu=np, \\sigma=\\sqrt{npq})",
     params: {
       n: { min: 10, max: 100, step: 1, default: 40, label: "Trials (n)" },
       p: { min: 0.1, max: 0.9, step: 0.05, default: 0.5, label: "Probability (p)" }
     },
-    rule: "Good when np > 5 AND n(1-p) > 5.",
+    rule: "np > 5, n(1-p) > 5",
     description: "As n increases, the discrete Binomial 'shape' converges to the continuous Normal bell curve."
   },
   "normal-poisson": {
     name: "Normal on Poisson",
-    base: "Poisson(λ)",
-    target: "Normal(μ=λ, σ=√λ)",
+    base: "X \\sim \\text{Poisson}(\\lambda)",
+    target: "X \\approx N(\\mu=\\lambda, \\sigma=\\sqrt{\\lambda})",
     params: {
       lambda: { min: 1, max: 50, step: 1, default: 10, label: "Rate (λ)" }
     },
-    rule: "Good when λ > 10.",
+    rule: "\\lambda > 10",
     description: "For large rates, the Poisson distribution becomes symmetric and matches the Normal distribution."
   }
 }
@@ -180,7 +181,7 @@ export default function ConvergePage() {
                         >
                            <div className="text-left">
                               <p className="text-[10px] font-black uppercase text-violet-400">Continuity Correction</p>
-                              <p className="text-[8px] text-gray-600 font-mono italic">{"P(X=k) ≈ P(k-0.5 < Y < k+0.5)"}</p>
+                              <MathRenderer tex="P(X=k) \approx P(k-0.5 < Y < k+0.5)" className="text-[8px] text-gray-600 font-mono italic" />
                            </div>
                            <div className={cn("w-2 h-2 rounded-full", useContinuityCorrection ? "bg-violet-400 shadow-[0_0_8px_#a78bfa]" : "bg-gray-800")} />
                         </button>
@@ -190,11 +191,14 @@ export default function ConvergePage() {
            </div>
 
            <div className="glass p-8 rounded-[32px] border-violet-500/10 space-y-4">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 mb-2">
                  <BookOpen className="w-3 h-3 text-violet-500" />
                  <h3 className="text-[10px] font-bold uppercase text-gray-500 tracking-widest italic">Heuristic Rule</h3>
               </div>
-              <p className="text-sm font-light leading-relaxed text-gray-300 italic">{COMPARE_CONFIGS[compType].rule}</p>
+              <div className="bg-black/40 p-4 rounded-xl flex justify-center py-6">
+                <MathRenderer tex={COMPARE_CONFIGS[compType].rule} className="text-violet-300" />
+              </div>
+              <p className="text-[10px] font-light leading-relaxed text-gray-300 italic mt-2">{COMPARE_CONFIGS[compType].description}</p>
            </div>
         </section>
 
@@ -212,8 +216,8 @@ export default function ConvergePage() {
                         <h3 className="text-sm font-black italic uppercase tracking-widest">Convergence Delta</h3>
                      </div>
                      <div className="grid grid-cols-2 gap-8">
-                        <StatItem label="Exact" value={COMPARE_CONFIGS[compType].base} color="text-white" />
-                        <StatItem label="Approx" value={COMPARE_CONFIGS[compType].target} color="text-violet-400" />
+                        <StatItem label="Exact" value={COMPARE_CONFIGS[compType].base} color="text-white" isMath />
+                        <StatItem label="Approx" value={COMPARE_CONFIGS[compType].target} color="text-violet-400" isMath />
                      </div>
                   </header>
 
@@ -290,11 +294,17 @@ export default function ConvergePage() {
   )
 }
 
-function StatItem({ label, value, color }: { label: string, value: string, color: string }) {
+function StatItem({ label, value, color, isMath }: { label: string, value: string, color: string, isMath?: boolean }) {
   return (
     <div className="text-right">
        <p className="text-[9px] font-black uppercase tracking-widest text-gray-700 italic">{label}</p>
-       <p className={cn("text-xs font-bold leading-none mt-1", color)}>{value}</p>
+       {isMath ? (
+         <div className="mt-1">
+           <MathRenderer tex={value} className={cn("text-[10px] font-bold leading-none", color)} />
+         </div>
+       ) : (
+         <p className={cn("text-xs font-bold leading-none mt-1", color)}>{value}</p>
+       )}
     </div>
   )
 }
