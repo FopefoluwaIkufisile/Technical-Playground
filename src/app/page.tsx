@@ -181,7 +181,7 @@ const projects = [
   },
   {
     id: "dhcp",
-    title: "Beacon",
+    title: "Beacon dhcp",
     category: "Networking",
     description: "Automating IP assignment through the DORA handshake.",
     icon: <Wifi className="w-6 h-6 text-emerald-400" />,
