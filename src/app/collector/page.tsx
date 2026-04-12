@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowLeft, Trash2, Database, Plus, RefreshCw, Info, ChevronRight, Layers, BarChart3 } from "lucide-react"
+import { ArrowLeft, Trash2, Plus, RefreshCw, Info, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
@@ -31,7 +31,7 @@ export default function CollectorPage() {
       </nav>
       <div className="max-w-7xl mx-auto space-y-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-gradient-to-br from-white via-white to-purple-400 bg-clip-text text-transparent">Garbage Collector</h1>
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-linear-to-br from-white via-white to-purple-400 bg-clip-text text-transparent">Garbage Collector</h1>
           <p className="text-gray-500 text-sm leading-relaxed max-w-2xl">How runtimes automatically reclaim unused memory — mark-and-sweep, generational collection, reference counting, and the traps that cause memory leaks despite a GC.</p>
         </motion.div>
         <div className="flex gap-2 flex-wrap pb-2 border-b border-white/5">
@@ -63,37 +63,37 @@ function ConceptsTab() {
             Garbage Collection (GC) automatically identifies and reclaims <strong className="text-white">heap memory that is no longer reachable</strong> from the program&apos;s root set. Without GC, developers must manually free memory — forgetting to do so causes memory leaks; freeing too early causes use-after-free bugs.
           </p>
           <div className="bg-black/40 p-5 rounded-2xl border border-purple-500/10 font-mono text-xs leading-7">
-            <p className="text-purple-400">// The reachability definition of "garbage":</p>
+            <p className="text-purple-400">{`// The reachability definition of "garbage":`}</p>
             <p className="text-gray-500">Root Set = {`{`}</p>
             <p className="pl-4 text-gray-500">global variables,</p>
             <p className="pl-4 text-gray-500">local variables (on stack),</p>
             <p className="pl-4 text-gray-500">CPU registers,</p>
             <p className="pl-4 text-gray-500">closures in scope</p>
             <p className="text-gray-500">{`}`}</p>
-            <p className="mt-2 text-gray-700">// Object is LIVE if reachable from Root Set (directly or transitively)</p>
-            <p className="text-gray-700">// Object is GARBAGE if NOT reachable — can be safely collected</p>
-            <p className="mt-2 text-gray-600">// Example:</p>
-            <p>let obj1 = {`{}`}  <span className="text-gray-700">// reachable via 'obj1' reference</span></p>
-            <p>obj1 = null    <span className="text-gray-700">// reference dropped → obj1 becomes garbage</span></p>
+            <p className="mt-2 text-gray-700">{"// Object is LIVE if reachable from Root Set (directly or transitively)"}</p>
+            <p className="text-gray-700">{"// Object is GARBAGE if NOT reachable — can be safely collected"}</p>
+            <p className="mt-2 text-gray-600">{"// Example:"}</p>
+            <p>let obj1 = {`{}`}  <span className="text-gray-700">{"// reachable via 'obj1' reference"}</span></p>
+            <p>obj1 = null    <span className="text-gray-700">{"// reference dropped → obj1 becomes garbage"}</span></p>
           </div>
         </div>
         <div className="glass p-8 rounded-[32px] border-white/5 space-y-5">
           <h3 className="text-[10px] font-black uppercase tracking-widest text-gray-600">How Reference Counting Works</h3>
           <p className="text-sm text-gray-400 leading-relaxed">Every object tracks how many references point to it. When the count reaches zero, memory is immediately freed. Used by Python, Swift, Rust (Rc), C++ (shared_ptr). Fatal weakness: <strong className="text-white">circular references</strong>.</p>
           <div className="bg-black/40 p-5 rounded-2xl border border-purple-500/10 font-mono text-xs leading-7">
-            <p className="text-purple-400">// Python CPython uses reference counting:</p>
-            <p>a = [1, 2, 3]   <span className="text-gray-700">// refcount([1,2,3]) = 1</span></p>
-            <p>b = a           <span className="text-gray-700">// refcount([1,2,3]) = 2</span></p>
-            <p>del a           <span className="text-gray-700">// refcount([1,2,3]) = 1</span></p>
-            <p>del b           <span className="text-gray-700">// refcount([1,2,3]) = 0 → freed!</span></p>
+            <p className="text-purple-400">{"// Python CPython uses reference counting:"}</p>
+            <p>a = [1, 2, 3]   <span className="text-gray-700">{"// refcount([1,2,3]) = 1"}</span></p>
+            <p>b = a           <span className="text-gray-700">{"// refcount([1,2,3]) = 2"}</span></p>
+            <p>del a           <span className="text-gray-700">{"// refcount([1,2,3]) = 1"}</span></p>
+            <p>del b           <span className="text-gray-700">{"// refcount([1,2,3]) = 0 → freed!"}</span></p>
             <div className="mt-3 pt-3 border-t border-white/5">
-              <p className="text-red-400">// FATAL: Circular reference — never freed!</p>
+              <p className="text-red-400">{"// FATAL: Circular reference — never freed!"}</p>
               <p>a = {`{}`}; b = {`{}`}</p>
-              <p>a.ref = b  <span className="text-gray-700">// refcount(b) = 2</span></p>
-              <p>b.ref = a  <span className="text-gray-700">// refcount(a) = 2</span></p>
-              <p>del a; del b  <span className="text-gray-700">// refcount(a)=1, refcount(b)=1</span></p>
-              <p className="text-gray-700">// Neither reaches 0! Both objects leak!</p>
-              <p className="text-gray-700">// Python's cycle detector runs periodically to fix this</p>
+              <p>a.ref = b  <span className="text-gray-700">{"// refcount(b) = 2"}</span></p>
+              <p>b.ref = a  <span className="text-gray-700">{"// refcount(a) = 2"}</span></p>
+              <p>del a; del b  <span className="text-gray-700">{"// refcount(a)=1, refcount(b)=1"}</span></p>
+              <p className="text-gray-700">{"// Neither reaches 0! Both objects leak!"}</p>
+              <p className="text-gray-700">{"// Python's cycle detector runs periodically to fix this"}</p>
             </div>
           </div>
         </div>
@@ -126,16 +126,16 @@ function SimulatorTab() {
   const [isGC, setIsGC] = useState(false)
   const [logs, setLogs] = useState<string[]>([])
   const [gcCount, setGcCount] = useState(0)
-  const addLog = (msg: string) => setLogs(p => [`[GC] ${msg}`, ...p].slice(0, 8))
+  const addLog = useCallback((msg: string) => setLogs(p => [`[GC] ${msg}`, ...p].slice(0, 8)), [])
 
-  const allocate = () => {
-    if (heap.length >= 48) { addLog("OOM: Heap full! Triggering emergency GC."); runGC(); return }
+  const allocate = useCallback(() => {
+    if (heap.length >= 48) { addLog("OOM: Heap full! Triggering emergency GC."); return }
     const types: MemNode["type"][] = ["object", "array", "closure"]
     const id = Math.random().toString(36).slice(2, 5).toUpperCase()
     const node: MemNode = { id, size: Math.floor(Math.random() * 4) + 1, reachable: Math.random() > 0.35, marked: false, gen: "young", type: types[Math.floor(Math.random() * 3)] }
     setHeap(p => [...p, node])
     addLog(`Alloc ${node.type} 0x${id} (${node.reachable ? "reachable" : "orphaned"})`)
-  }
+  }, [heap.length, addLog])
 
   const runGC = async () => {
     if (isGC) return
@@ -394,7 +394,7 @@ largeObject = null;
 // Later: const obj = weakRef.deref(); // may be undefined`,
     },
   ]
-  const badge = (s: string) => "bg-orange-500/20 text-orange-400 border-orange-500/30"
+  const badge = (severity: string) => severity === "critical" ? "bg-red-500/20 text-red-400 border-red-500/30" : severity === "high" ? "bg-orange-500/20 text-orange-400 border-orange-500/30" : "bg-yellow-500/20 text-yellow-400 border-yellow-500/30"
   return (
     <div className="space-y-4">
       <div className="glass p-5 rounded-2xl border-white/5 flex gap-3 mb-4">

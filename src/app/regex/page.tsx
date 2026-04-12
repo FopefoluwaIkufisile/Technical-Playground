@@ -1,11 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowLeft, Search, Target, Code2, Layers, Info, AlertCircle, ChevronRight, BookOpen, Zap, CheckCircle2, XCircle } from "lucide-react"
+import { ArrowLeft, Target, Code2, Info, AlertCircle, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
-import { useMemo } from "react"
 
 type Tab = "concepts" | "playground" | "patterns" | "pitfalls"
 const TABS: { id: Tab; label: string }[] = [
@@ -30,7 +29,7 @@ export default function RegexPage() {
       </nav>
       <div className="max-w-7xl mx-auto space-y-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-gradient-to-br from-white via-white to-rose-400 bg-clip-text text-transparent">Regular Expressions</h1>
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-linear-to-br from-white via-white to-rose-400 bg-clip-text text-transparent">Regular Expressions</h1>
           <p className="text-gray-500 text-sm leading-relaxed max-w-2xl">Patterns, quantifiers, groups, lookaheads — how regex engines work, common patterns, and the catastrophic backtracking pitfalls that can halt your server.</p>
         </motion.div>
         <div className="flex gap-2 flex-wrap pb-2 border-b border-white/5">
@@ -130,13 +129,10 @@ function PlaygroundTab() {
   const [regex, setRegex] = useState("([a-zA-Z0-9._%+-]+)@([a-zA-Z0-9.-]+)\\.([a-zA-Z]{2,})")
   const [input, setInput] = useState("Contact us at support@example.com or admin@internal.co.uk for help. Invalid: @nodomain.com, user@.com")
   const [flags, setFlags] = useState("gi")
-  const [error, setError] = useState<string | null>(null)
 
-  const { matches, highlighted } = useMemo(() => {
-    if (!regex) return { matches: [], highlighted: input }
+  const { matches, error } = useMemo(() => {
+    if (!regex) return { matches: [], highlighted: input, error: null }
     try {
-      const re = new RegExp(regex, flags)
-      setError(null)
       const results: RegExpExecArray[] = []
       let m: RegExpExecArray | null
       const safeFlags = flags.includes("g") ? flags : flags + "g"
@@ -145,16 +141,15 @@ function PlaygroundTab() {
         results.push(m)
         if (m.index === re2.lastIndex) re2.lastIndex++
       }
-      return { matches: results, highlighted: input }
-    } catch (e: any) {
-      setError(e.message)
-      return { matches: [], highlighted: input }
+      return { matches: results, highlighted: input, error: null }
+    } catch (e: unknown) {
+      return { matches: [], highlighted: input, error: (e as Error).message }
     }
   }, [regex, input, flags])
 
   const renderHighlighted = () => {
     if (!matches.length) return <span className="text-gray-400">{input}</span>
-    const spans: JSX.Element[] = []
+    const spans: React.ReactElement[] = []
     let lastEnd = 0
     matches.forEach((m, idx) => {
       if (m.index > lastEnd) spans.push(<span key={`t${idx}`} className="text-gray-400">{input.slice(lastEnd, m.index)}</span>)
@@ -184,7 +179,7 @@ function PlaygroundTab() {
           <div className="glass p-5 rounded-[24px] border-white/5 space-y-3">
             <p className="text-[9px] uppercase font-black text-gray-600">Flags</p>
             <div className="grid grid-cols-3 gap-2">
-              {[["g", "global"], ["i", "ignorecase"], ["m", "multiline"]].map(([f, label]) => (
+              {(["g", "i", "m"] as const).map(f => (
                 <button key={f} onClick={() => setFlags(flags.includes(f) ? flags.replace(f, "") : flags + f)}
                   className={cn("py-2 rounded-lg text-[9px] font-black uppercase border transition-all", flags.includes(f) ? "bg-rose-500/20 border-rose-500 text-rose-400" : "bg-white/5 border-white/5 text-gray-700")}>{f}</button>
               ))}
@@ -218,7 +213,7 @@ function PlaygroundTab() {
             <div className="flex gap-3 flex-wrap overflow-auto max-h-60">
               <AnimatePresence>
                 {matches.map((m, i) => (
-                  <motion.div key={i} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="min-w-[180px] p-4 bg-white/5 border border-rose-500/10 rounded-2xl space-y-2 flex-shrink-0">
+                  <motion.div key={i} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="min-w-[180px] p-4 bg-white/5 border border-rose-500/10 rounded-2xl space-y-2 shrink-0">
                     <div className="flex justify-between items-center border-b border-white/5 pb-2">
                       <span className="text-[10px] font-black text-rose-400">Match #{i+1}</span>
                       <span className="text-[8px] font-mono text-gray-700">idx:{m.index}</span>

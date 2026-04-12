@@ -3,9 +3,8 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  ArrowLeft, Lock, Key, Hash, Shield, ShieldAlert, ChevronRight,
-  Info, CheckCircle2, AlertTriangle, RefreshCw, Zap, Eye, EyeOff,
-  Binary, Copy
+  ArrowLeft, Lock, ShieldAlert,
+  CheckCircle2, AlertTriangle, RefreshCw, Zap, Eye, EyeOff
 } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
@@ -36,7 +35,7 @@ export default function CipherPage() {
 
       <div className="max-w-7xl mx-auto space-y-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-gradient-to-br from-white via-white to-emerald-400 bg-clip-text text-transparent">
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-linear-to-br from-white via-white to-emerald-400 bg-clip-text text-transparent">
             Cipher
           </h1>
           <p className="text-gray-500 text-sm leading-relaxed max-w-2xl">
@@ -144,7 +143,7 @@ function OverviewTab() {
 /* ════════ SYMMETRIC ════════ */
 function SymmetricTab() {
   const [showKey, setShowKey] = useState(false)
-  const [plaintext, setPlaintext] = useState("HELLO WORLD")
+  const [plaintext] = useState("HELLO WORLD")
   const [phase, setPhase] = useState(-1)
   const [running, setRunning] = useState(false)
 
@@ -263,7 +262,6 @@ function SymmetricTab() {
 
 /* ════════ ASYMMETRIC ════════ */
 function AsymmetricTab() {
-  const [showPrivate, setShowPrivate] = useState(false)
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -276,11 +274,11 @@ function AsymmetricTab() {
             The security of RSA relies on the <strong className="text-white">integer factorization problem</strong>: it&apos;s easy to multiply two huge prime numbers together, but computationally infeasible to factor the product back into those primes. A 2048-bit RSA key would take all computers on Earth billions of years to break.
           </p>
           <div className="bg-black/40 p-5 rounded-2xl border border-blue-500/10 font-mono text-xs leading-7">
-            <p className="text-gray-600">// RSA key generation (simplified):</p>
-            <p><span className="text-blue-400">p, q</span> = two_large_random_primes()   <span className="text-gray-600">// e.g., 512-bit each</span></p>
-            <p><span className="text-blue-400">n</span> = p × q                          <span className="text-gray-600">// modulus (public)</span></p>
-            <p><span className="text-blue-400">e</span> = 65537                           <span className="text-gray-600">// public exponent</span></p>
-            <p><span className="text-violet-400">d</span> = modular_inverse(e, φ(n))       <span className="text-gray-600">// private exponent</span></p>
+            <p className="text-gray-600">{"// RSA key generation (simplified):"}</p>
+            <p><span className="text-blue-400">p, q</span> = two_large_random_primes()   <span className="text-gray-600">{"// e.g., 512-bit each"}</span></p>
+            <p><span className="text-blue-400">n</span> = p × q                          <span className="text-gray-600">{"// modulus (public)"}</span></p>
+            <p><span className="text-blue-400">e</span> = 65537                           <span className="text-gray-600">{"// public exponent"}</span></p>
+            <p><span className="text-violet-400">d</span> = modular_inverse(e, φ(n))       <span className="text-gray-600">{"// private exponent"}</span></p>
             <div className="mt-3 pt-3 border-t border-white/5">
               <p><span className="text-emerald-400">Public  Key</span> = {'{'}<span className="text-blue-400">n</span>, <span className="text-blue-400">e</span>{'}'} <span className="text-gray-600">← share freely</span></p>
               <p><span className="text-red-400">Private Key</span> = {'{'}<span className="text-violet-400">n</span>, <span className="text-violet-400">d</span>{'}'} <span className="text-gray-600">← never expose</span></p>
@@ -365,9 +363,8 @@ function AsymmetricTab() {
 /* ════════ HASHING ════════ */
 function HashingTab() {
   const [input, setInput] = useState("hello world")
-  const [showDetail, setShowDetail] = useState("sha256")
 
-  const SIMULATED_HASHES: Record<string, string> = {
+  const SIMULATED_HASHES: Record<string, Record<string, string>> = {
     "hello world": {
       "sha256": "b94d27b9934d3e08a52e52d7da7dabfac484efe04294e576f7f1e67a41d15b4",
       "sha512": "309ecc489c12d6eb4cc40f50c902f2b4d0ed77ee511a7c7a9bcd3ca86d4cd86f989dd35bc5ff499670da34255b45b0cfd830e81f605dcf7dc5542e93ae9cd76f",
@@ -380,7 +377,10 @@ function HashingTab() {
     }
   }
 
-  const getHash = (algo: string) => SIMULATED_HASHES[input]?.[algo] ?? `[sha-${algo} of "${input.substring(0, 10)}..."]`
+  const getHash = (algo: string) => {
+    const entry = SIMULATED_HASHES[input]
+    return entry?.[algo] ?? `[${algo.toUpperCase()} of "${input.substring(0, 10)}..."]`
+  }
 
   return (
     <div className="space-y-6">
@@ -450,19 +450,19 @@ function HashingTab() {
               <p className="text-red-400 font-black text-xs uppercase flex items-center gap-2"><AlertTriangle className="w-3.5 h-3.5" />Wrong: SHA-256 for Passwords</p>
               <div className="font-mono text-[11px] text-gray-400 space-y-1">
                 <p>hash = SHA256(&quot;password123&quot;)</p>
-                <p className="text-gray-600">// GPU can compute ~10 BILLION SHA-256 per second</p>
-                <p className="text-gray-600">// Entire rockyou.txt (~14M passwords) checked in 1.4ms!</p>
-                <p className="text-gray-600">// SHA-256 is designed to be FAST — wrong for passwords</p>
+                <p className="text-gray-600">{"// GPU can compute ~10 BILLION SHA-256 per second"}</p>
+                <p className="text-gray-600">{"// Entire rockyou.txt (~14M passwords) checked in 1.4ms!"}</p>
+                <p className="text-gray-600">{"// SHA-256 is designed to be FAST — wrong for passwords"}</p>
               </div>
             </div>
             <div className="p-5 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 space-y-2">
               <p className="text-emerald-400 font-black text-xs uppercase flex items-center gap-2"><CheckCircle2 className="w-3.5 h-3.5" />Correct: bcrypt / Argon2 / scrypt</p>
               <div className="font-mono text-[11px] text-gray-400 space-y-1">
                 <p>hash = bcrypt(&quot;password123&quot;, cost=12)</p>
-                <p className="text-gray-600">// bcrypt: ~250ms per hash (intentionally slow)</p>
-                <p className="text-gray-600">// GPU: only ~20K bcrypt/sec (1000x harder to crack)</p>
-                <p className="text-gray-600">// Built-in salt prevents rainbow table attacks</p>
-                <p className="text-gray-600">// Cost factor is tunable as hardware improves</p>
+                <p className="text-gray-600">{"// bcrypt: ~250ms per hash (intentionally slow)"}</p>
+                <p className="text-gray-600">{"// GPU: only ~20K bcrypt/sec (1000x harder to crack)"}</p>
+                <p className="text-gray-600">{"// Built-in salt prevents rainbow table attacks"}</p>
+                <p className="text-gray-600">{"// Cost factor is tunable as hardware improves"}</p>
               </div>
             </div>
           </div>
@@ -502,17 +502,17 @@ function ModernTab() {
             <strong className="text-white">Perfect Forward Secrecy (PFS)</strong> means that even if the server&apos;s private key is compromised later, past recorded sessions cannot be decrypted. This is achieved by deriving a new, ephemeral key for each session.
           </p>
           <div className="bg-black/40 p-5 rounded-2xl border border-amber-500/10 font-mono text-xs leading-7">
-            <p className="text-gray-600">// ECDH Key Exchange (used in TLS 1.3):</p>
-            <p className="text-gray-600">// Both parties agree on a curve (e.g., X25519)</p>
+            <p className="text-gray-600">{"// ECDH Key Exchange (used in TLS 1.3):"}</p>
+            <p className="text-gray-600">{"// Both parties agree on a curve (e.g., X25519)"}</p>
             <p className="mt-2"><span className="text-blue-400">Alice: </span><span className="text-white">private_a = random()</span></p>
             <p><span className="text-blue-400">Alice: </span><span className="text-white">public_A = G × private_a</span> <span className="text-gray-600">(G = generator point)</span></p>
             <p className="mt-2"><span className="text-emerald-400">Bob:   </span><span className="text-white">private_b = random()</span></p>
             <p><span className="text-emerald-400">Bob:   </span><span className="text-white">public_B = G × private_b</span></p>
-            <p className="mt-2 text-gray-600">// They exchange public keys over the network</p>
+            <p className="mt-2 text-gray-600">{"// They exchange public keys over the network"}</p>
             <p><span className="text-blue-400">Alice: </span><span className="text-amber-400">shared = public_B × private_a</span></p>
             <p><span className="text-emerald-400">Bob:   </span><span className="text-amber-400">shared = public_A × private_b</span></p>
-            <p className="text-gray-600">// Mathematically: G×a×b = G×b×a ✓</p>
-            <p className="text-gray-600">// Neither transmitted the shared secret!</p>
+            <p className="text-gray-600">{"// Mathematically: G×a×b = G×b×a ✓"}</p>
+            <p className="text-gray-600">{"// Neither transmitted the shared secret!"}</p>
           </div>
         </div>
 

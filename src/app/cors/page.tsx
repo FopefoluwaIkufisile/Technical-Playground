@@ -31,7 +31,7 @@ export default function CORSPage() {
       </nav>
       <div className="max-w-7xl mx-auto space-y-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-gradient-to-br from-white via-white to-emerald-400 bg-clip-text text-transparent">CORS</h1>
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-linear-to-br from-white via-white to-emerald-400 bg-clip-text text-transparent">CORS</h1>
           <p className="text-gray-500 text-sm leading-relaxed max-w-2xl">Cross-Origin Resource Sharing — why the browser enforces it, what triggers preflight, how credentials interact with wildcards, and how to configure it correctly without destroying security.</p>
         </motion.div>
         <div className="flex gap-2 flex-wrap pb-2 border-b border-white/5">

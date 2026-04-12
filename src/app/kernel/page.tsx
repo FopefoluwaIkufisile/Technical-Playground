@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowLeft, Cpu, Layers, Power, HardDrive, Server, Terminal, Trash2, ShieldCheck, Monitor, ChevronRight, Info } from "lucide-react"
+import { ArrowLeft, Cpu, Layers, Power, Terminal, Trash2,Info } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
@@ -63,7 +63,7 @@ export default function KernelPage() {
       </nav>
       <div className="max-w-7xl mx-auto space-y-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-gradient-to-br from-white via-white to-indigo-400 bg-clip-text text-transparent">Kernel Engine</h1>
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-linear-to-br from-white via-white to-indigo-400 bg-clip-text text-transparent">Kernel Engine</h1>
           <p className="text-gray-500 text-sm leading-relaxed max-w-2xl">How operating systems boot, manage processes, and abstract hardware — from BIOS/UEFI all the way to PID 1 and user-space programs.</p>
         </motion.div>
         <div className="flex gap-2 flex-wrap pb-2 border-b border-white/5">
@@ -120,8 +120,8 @@ function ConceptsTab() {
           <p className="text-sm text-gray-400 leading-relaxed">Every time your code reads a file, allocates memory, or creates a network socket, it triggers a <strong className="text-white">system call</strong> — a controlled gateway from Ring 3 to Ring 0. The CPU switches context, runs kernel code, then returns.</p>
           <div className="bg-black/40 p-5 rounded-2xl border border-indigo-500/10 font-mono text-xs leading-7">
             <p className="text-indigo-400">// strace -p $(pgrep node) — watch syscalls live:</p>
-            <p className="text-gray-500">read(5, "", 16384) = 0  <span className="text-gray-700">// file read → kernel reads disk</span></p>
-            <p className="text-gray-500">write(1, "Hello\n", 6) = 6  <span className="text-gray-700">// stdout → kernel writes to TTY</span></p>
+            <p className="text-gray-500">read(5, &quot;&quot;, 16384) = 0  <span className="text-gray-700">// file read → kernel reads disk</span></p>
+            <p className="text-gray-500">write(1, &quot;Hello\n&quot;, 6) = 6  <span className="text-gray-700">// stdout → kernel writes to TTY</span></p>
             <p className="text-gray-500">mmap(NULL, 65536, ...)  <span className="text-gray-700">// allocate memory pages</span></p>
             <p className="text-gray-500">socket(AF_INET, ...) = 3  <span className="text-gray-700">// create TCP socket</span></p>
             <p className="text-gray-500">clone(...)  <span className="text-gray-700">// fork() → new process</span></p>
@@ -177,7 +177,7 @@ function BootTab() {
     addLog("Boot complete. User session ready.")
   }
 
-  const typeColor = { firmware: "blue", bootloader: "violet", kernel: "red", userspace: "emerald" }
+  // const typeColor = { firmware: "blue", bootloader: "violet", kernel: "red", userspace: "emerald" }
   const cc = (t: string) => ({ firmware: "text-blue-400 bg-blue-500/10 border-blue-500/30", bootloader: "text-violet-400 bg-violet-500/10 border-violet-500/30", kernel: "text-red-400 bg-red-500/10 border-red-500/30", userspace: "text-emerald-400 bg-emerald-500/10 border-emerald-500/30" }[t] ?? "text-gray-400 bg-white/5 border-white/10")
 
   return (
@@ -319,7 +319,7 @@ function ProcessesTab() {
                     )}>{p.state}</span>
                     <div className="flex justify-end items-center gap-3">
                       <span className="text-[10px] font-mono text-gray-500">{p.cpu}%</span>
-                      <button onClick={() => kill(p.pid)} className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white transition-all">
+                      <button onClick={() => kill(p.pid)} className="opacity-0 group-hover:opacity-100 transition-all p-1.5 rounded bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white">
                         <Trash2 className="w-3 h-3" />
                       </button>
                     </div>

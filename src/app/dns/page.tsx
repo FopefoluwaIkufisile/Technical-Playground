@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   ArrowLeft, Globe, Server, Database, Search, Clock, Trash2,
-  ChevronRight, Shield, ShieldAlert, AlertTriangle, Info,
+  ChevronRight, Shield, AlertTriangle,
   CheckCircle2, Zap, FileText, RefreshCw
 } from "lucide-react"
 import Link from "next/link"
@@ -35,7 +35,7 @@ export default function DNSPage() {
 
       <div className="max-w-7xl mx-auto space-y-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-gradient-to-br from-white via-white to-blue-400 bg-clip-text text-transparent">
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-linear-to-br from-white via-white to-blue-400 bg-clip-text text-transparent">
             DNS Atlas
           </h1>
           <p className="text-gray-500 text-sm leading-relaxed max-w-2xl">
@@ -82,7 +82,7 @@ function OverviewTab() {
             Without DNS, you&apos;d have to memorize the IP address of every website you visit. DNS is a <strong className="text-white">distributed, hierarchical database</strong> — no single server holds all the data. Instead, it&apos;s split across millions of servers worldwide.
           </p>
           <div className="p-5 rounded-2xl bg-blue-500/5 border border-blue-500/10 font-mono text-xs space-y-2">
-            <p className="text-gray-600">// The lookup you trigger on every page visit:</p>
+            <p className="text-gray-600">{"// The lookup you trigger on every page visit:"}</p>
             <p><span className="text-blue-400">DNS_QUERY</span><span className="text-gray-500">(</span><span className="text-white">&quot;google.com&quot;</span><span className="text-gray-500">)</span></p>
             <p className="text-gray-600 pl-4">→ Recursive Resolver checks cache...</p>
             <p className="text-gray-600 pl-4">→ Root Server → TLD Server → Authoritative NS</p>
@@ -288,7 +288,7 @@ function ResolutionTab() {
   const [isResolving, setIsResolving] = useState(false)
   const [logs, setLogs] = useState<{ msg: string; type: string; time: string }[]>([])
   const [cache, setCache] = useState<CacheEntry[]>([])
-  const [now, setNow] = useState(Date.now())
+  const [now, setNow] = useState(() => Date.now())
   const addLog = (msg: string, type = "out") => setLogs(p => [{ msg, type, time: new Date().toLocaleTimeString().split(" ")[0] }, ...p].slice(0, 12))
 
   useEffect(() => {
@@ -347,7 +347,7 @@ function ResolutionTab() {
               {cache.map((e, i) => (
                 <div key={i} className="flex justify-between items-center p-2.5 bg-white/3 rounded-xl border border-white/5">
                   <div><p className="text-[11px] font-bold text-blue-300">{e.domain}</p><p className="text-[9px] text-gray-600 font-mono">{e.ip}</p></div>
-                  <div className="text-[9px] font-mono text-gray-700 px-2 py-1 rounded bg-emerald-500/10 text-emerald-400">{Math.max(0, Math.round((e.expiresAt - now) / 1000))}s</div>
+                  <div className="text-[9px] font-mono px-2 py-1 rounded bg-emerald-500/10 text-emerald-400">{Math.max(0, Math.round((e.expiresAt - now) / 1000))}s</div>
                 </div>
               ))}
               {!cache.length && <p className="text-[10px] text-gray-800 text-center py-4 italic">Cache empty</p>}

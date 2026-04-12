@@ -1,10 +1,10 @@
 "use client"
 
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  ArrowLeft, Wifi, Server, XCircle, Trash2, Clock, Info, ChevronRight,
-  Network, CheckCircle2, AlertCircle, AlertTriangle, Zap
+  ArrowLeft, Wifi, XCircle, Trash2, Info, ChevronRight,
+  Network
 } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
@@ -34,7 +34,7 @@ export default function DHCPPage() {
       </nav>
       <div className="max-w-7xl mx-auto space-y-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-gradient-to-br from-white via-white to-emerald-400 bg-clip-text text-transparent">DHCP Protocol</h1>
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-linear-to-br from-white via-white to-emerald-400 bg-clip-text text-transparent">DHCP Protocol</h1>
           <p className="text-gray-500 text-sm leading-relaxed max-w-2xl">How devices automatically receive IP addresses — the DORA handshake, lease mechanics, IP pool management, and the starvation attack that can knock devices offline.</p>
         </motion.div>
         <div className="flex gap-2 flex-wrap pb-2 border-b border-white/5">
@@ -117,7 +117,7 @@ function SimulatorTab() {
   const [leases, setLeases] = useState<Lease[]>([])
   const [step, setStep] = useState<"IDLE" | "DISCOVER" | "OFFER" | "REQUEST" | "ACKNOWLEDGE" | "FAIL">("IDLE")
   const [handshaking, setHandshaking] = useState(false)
-  const [now, setNow] = useState(Date.now())
+  const [now, setNow] = useState(() => Date.now())
   const [logs, setLogs] = useState<{ msg: string; type: "broadcast" | "unicast" | "system" }[]>([])
 
   const POOL_START = 10; const POOL_SIZE = 20

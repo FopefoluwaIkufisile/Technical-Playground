@@ -314,7 +314,7 @@ export default function Home() {
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-4xl sm:text-5xl md:text-7xl font-bold bg-gradient-to-r from-white via-white to-gray-500 bg-clip-text text-transparent tracking-tight"
+            className="text-4xl sm:text-5xl md:text-7xl font-bold bg-linear-to-r from-white via-white to-gray-500 bg-clip-text text-transparent tracking-tight"
           >
             Technical Playgrounds
           </motion.h1>
@@ -376,7 +376,7 @@ export default function Home() {
               >
                 <Link href={project.path} className="group block h-full">
                   <div className={cn(
-                    "relative h-full p-6 sm:p-8 rounded-[32px] border border-white/5 bg-gradient-to-br transition-all duration-500 ease-out hover:scale-[1.02] hover:-translate-y-1 glass backdrop-blur-xl flex flex-col",
+                    "relative h-full p-6 sm:p-8 rounded-[32px] border border-white/5 bg-linear-to-br transition-all duration-500 ease-out hover:scale-[1.02] hover:-translate-y-1 glass backdrop-blur-xl flex flex-col",
                     project.color,
                     project.borderColor
                   )}>

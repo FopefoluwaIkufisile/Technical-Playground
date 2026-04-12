@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { ArrowLeft, GitBranch, GitCommit, GitPullRequest, GitMerge, Zap, Info, ChevronRight, Terminal, Layers, ArrowDownRight } from "lucide-react"
+import { ArrowLeft, GitBranch, GitCommit, GitPullRequest, GitMerge, Info, ChevronRight } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
@@ -32,7 +32,7 @@ export default function VersionPage() {
       </nav>
       <div className="max-w-7xl mx-auto space-y-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-gradient-to-br from-white via-white to-orange-400 bg-clip-text text-transparent">GitCore</h1>
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-linear-to-br from-white via-white to-orange-400 bg-clip-text text-transparent">GitCore</h1>
           <p className="text-gray-500 text-sm leading-relaxed max-w-2xl">How Git actually works under the hood — content-addressable storage, the blob/tree/commit object model, branches as pointers, and what rebase vs merge actually does to your DAG.</p>
         </motion.div>
         <div className="flex gap-2 flex-wrap pb-2 border-b border-white/5">
@@ -103,7 +103,7 @@ function ConceptsTab() {
 }
 
 function SimulatorTab() {
-  const [commits, setCommits] = useState<Commit[]>([
+  const [commits, setCommits] = useState<Commit[]>(() => [
     { id: "a1b2c", message: "Initial commit", parents: [], branch: "main", timestamp: Date.now() }
   ])
   const [refs, setRefs] = useState<Ref[]>([{ name: "main", commitId: "a1b2c" }, { name: "HEAD", commitId: "a1b2c" }])
@@ -227,7 +227,7 @@ function SimulatorTab() {
                       <span className={cn("text-[7px] font-black px-1.5 py-0.5 rounded uppercase", commit.parents.length > 1 ? "bg-emerald-500/10 text-emerald-500" : "bg-white/5 text-gray-600")}>{commit.parents.length > 1 ? "merge" : commit.branch}</span>
                     </div>
                   </div>
-                  {i < commits.length - 1 && <div className="absolute left-5 top-10 bottom-[-2rem] w-0.5 bg-gradient-to-b from-white/10 to-transparent -z-10" />}
+                  {i < commits.length - 1 && <div className="absolute left-5 top-10 -bottom-8 w-0.5 bg-linear-to-b from-white/10 to-transparent -z-10" />}
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -237,7 +237,7 @@ function SimulatorTab() {
 
       <AnimatePresence>
         {prOpen && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] flex items-center justify-center p-6">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black/80 backdrop-blur-sm z-100 flex items-center justify-center p-6">
             <motion.div initial={{ y: 20, scale: 0.95 }} animate={{ y: 0, scale: 1 }} className="glass p-8 rounded-[40px] border-orange-500/20 max-w-lg w-full space-y-6">
               <div className="flex items-center gap-4">
                 <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"><GitPullRequest className="w-6 h-6" /></div>

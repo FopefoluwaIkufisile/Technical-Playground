@@ -3,9 +3,8 @@
 import { useState, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  ArrowLeft, Brain, Target, GraduationCap, ClipboardCheck,
-  Zap, RefreshCw, ChevronRight, Timer, Sigma, Database,
-  BookOpen, CheckCircle2, XCircle, Lightbulb, BarChart3, Info
+  ArrowLeft, Brain, GraduationCap, ClipboardCheck,
+  RefreshCw, ChevronRight, CheckCircle2, XCircle, Lightbulb, BarChart3, Info
 } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
@@ -542,7 +541,7 @@ export default function StatMasteryPage() {
 
       <div className="max-w-7xl mx-auto space-y-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-gradient-to-br from-white via-white to-indigo-400 bg-clip-text text-transparent">STAT 2400 Mastery</h1>
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-linear-to-br from-white via-white to-indigo-400 bg-clip-text text-transparent">STAT 2400 Mastery</h1>
           <p className="text-gray-500 text-sm max-w-2xl">All 6 modules covered. Concepts with formulas, exam-level scenario trainer, and timed mock test with real questions from the sample finals. Focus: Units 4, 5, 6.</p>
         </motion.div>
 
@@ -699,7 +698,7 @@ function TrainerTab() {
           <div className="p-3 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 shrink-0"><Brain className="w-5 h-5" /></div>
           <div>
             <p className="text-[9px] uppercase font-black text-gray-600 mb-2">Scenario {idx + 1}/{SCENARIOS.length}</p>
-            <p className="text-base font-bold text-gray-200 leading-relaxed italic">"{s.prompt}"</p>
+            <p className="text-base font-bold text-gray-200 leading-relaxed italic">&quot;{s.prompt}&quot;</p>
           </div>
         </div>
         <div className="space-y-4 pt-4 border-t border-white/5">
@@ -799,7 +798,7 @@ function PracticeTab() {
           ) : (
             <div className="glass p-12 rounded-[32px] border-white/5 flex flex-col items-center justify-center text-center h-full gap-4">
               <BarChart3 className="w-12 h-12 text-indigo-400/30" />
-              <p className="text-gray-700 font-bold">Click a module or "New Problem" to begin</p>
+              <p className="text-gray-700 font-bold">Click a module or &quot;New Problem&quot; to begin</p>
             </div>
           )}
         </AnimatePresence>

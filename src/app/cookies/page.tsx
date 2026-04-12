@@ -35,7 +35,7 @@ export default function CookiePage() {
 
       <div className="max-w-7xl mx-auto space-y-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-gradient-to-br from-white via-white to-teal-400 bg-clip-text text-transparent">
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-linear-to-br from-white via-white to-teal-400 bg-clip-text text-transparent">
             Cookie Lab
           </h1>
           <p className="text-gray-500 text-sm leading-relaxed max-w-2xl">

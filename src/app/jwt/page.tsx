@@ -1,15 +1,18 @@
 "use client"
 
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  ArrowLeft, Key, ShieldAlert, Globe, GitFork, Code2, Zap,
+  ArrowLeft, Key, ShieldAlert, Globe, Code2, Zap,
   AlertTriangle, Copy, Plus, Trash2, Lock, User, Server,
   ArrowRight, Info, Clock, Eye, FileKey, RefreshCw,
-  CheckCircle2, XCircle, Shield, ChevronRight
+  CheckCircle2, XCircle, ChevronRight
 } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+
+// Module-level timestamp — captured once at load, safe for React Compiler
+const loadTime = Date.now()
 
 type Tab = "overview" | "structure" | "forge" | "flow" | "vulnerabilities"
 type Part = "header" | "payload" | "signature"
@@ -67,7 +70,7 @@ export default function JWTForgePage() {
 
       <div className="max-w-7xl mx-auto space-y-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-gradient-to-br from-white via-white to-indigo-400 bg-clip-text text-transparent">
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-linear-to-br from-white via-white to-indigo-400 bg-clip-text text-transparent">
             Token Forge
           </h1>
           <p className="text-gray-500 text-sm leading-relaxed max-w-2xl">
@@ -197,9 +200,9 @@ function JWTStructure() {
           JWT = Base64URL(Header) + &quot;.&quot; + Base64URL(Payload) + &quot;.&quot; + Signature
         </p>
         <div className="flex h-3 rounded-full overflow-hidden gap-px">
-          <button onClick={() => setActive("header")} className={cn("transition-all flex-[20]", active === "header" ? "bg-rose-400" : "bg-rose-400/25 hover:bg-rose-400/50")} />
-          <button onClick={() => setActive("payload")} className={cn("transition-all flex-[45]", active === "payload" ? "bg-violet-400" : "bg-violet-400/25 hover:bg-violet-400/50")} />
-          <button onClick={() => setActive("signature")} className={cn("transition-all flex-[35]", active === "signature" ? "bg-blue-400" : "bg-blue-400/25 hover:bg-blue-400/50")} />
+          <button onClick={() => setActive("header")} className={cn("transition-all flex-20", active === "header" ? "bg-rose-400" : "bg-rose-400/25 hover:bg-rose-400/50")} />
+          <button onClick={() => setActive("payload")} className={cn("transition-all flex-45", active === "payload" ? "bg-violet-400" : "bg-violet-400/25 hover:bg-violet-400/50")} />
+          <button onClick={() => setActive("signature")} className={cn("transition-all flex-35", active === "signature" ? "bg-blue-400" : "bg-blue-400/25 hover:bg-blue-400/50")} />
         </div>
         <div className="flex gap-6 text-[11px]">
           {[
@@ -348,7 +351,7 @@ function SignatureDetail() {
           The signature proves both <strong className="text-white">authenticity</strong> (who issued it) and <strong className="text-white">integrity</strong> (it hasn&apos;t been modified). Without controlling the secret key, an attacker cannot produce a valid signature for a tampered payload.
         </p>
         <div className="bg-black/40 p-5 rounded-2xl border border-white/5 font-mono text-xs space-y-1">
-          <p className="text-gray-600">// HMAC-SHA256 signing formula:</p>
+          <p className="text-gray-600">{"// HMAC-SHA256 signing formula:"}</p>
           <p className="text-blue-300 leading-7">
             HMACSHA256(<br />
             &nbsp;&nbsp;<span className="text-rose-300">base64url(header)</span> + &quot;.&quot; +<br />
@@ -358,7 +361,7 @@ function SignatureDetail() {
           </p>
         </div>
         <div className="bg-black/40 p-5 rounded-2xl border border-white/5 font-mono text-xs">
-          <p className="text-gray-600 mb-2">// Result (Base64URL encoded):</p>
+          <p className="text-gray-600 mb-2">{"// Result (Base64URL encoded):"}</p>
           <p className="text-blue-400 break-all">SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</p>
         </div>
         <div className="p-4 rounded-2xl bg-blue-500/5 border border-blue-500/10 flex gap-3">
@@ -399,7 +402,7 @@ function JWTForge() {
   const [input, setInput] = useState(SAMPLE_JWT)
   const [algorithm, setAlgorithm] = useState("HS256")
   const [secret, setSecret] = useState("my-super-secret-key")
-  const [claims, setClaims] = useState<ClaimEntry[]>([
+  const [claims, setClaims] = useState<ClaimEntry[]>(() => [
     { id: 1, key: "sub", value: "user_123", type: "string" },
     { id: 2, key: "name", value: "Alice Smith", type: "string" },
     { id: 3, key: "role", value: "user", type: "string" },
@@ -413,6 +416,7 @@ function JWTForge() {
   const [copied, setCopied] = useState(false)
 
   const decoded = parseJWT(input)
+  const isExpired = decoded?.payload?.exp ? decoded.payload.exp * 1000 < loadTime : false
 
   const generateToken = useCallback(async () => {
     const header = { alg: algorithm, typ: "JWT" }
@@ -489,10 +493,10 @@ function JWTForge() {
                       <pre className="text-violet-300 text-xs font-mono">{JSON.stringify(decoded.payload, null, 2)}</pre>
                       {decoded.payload.exp && (
                         <div className={cn("mt-3 p-3 rounded-xl text-[11px] flex items-center gap-2",
-                          decoded.payload.exp * 1000 < Date.now() ? "bg-red-500/10 border border-red-500/20 text-red-400" : "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"
+                          isExpired ? "bg-red-500/10 border border-red-500/20 text-red-400" : "bg-emerald-500/10 border border-emerald-500/20 text-emerald-400"
                         )}>
                           <Clock className="w-3 h-3" />
-                          {decoded.payload.exp * 1000 < Date.now()
+                          {isExpired
                             ? `Expired: ${new Date(decoded.payload.exp * 1000).toLocaleString()}`
                             : `Valid until: ${new Date(decoded.payload.exp * 1000).toLocaleString()}`}
                         </div>
@@ -665,17 +669,17 @@ const FLOW_STEPS = [
   },
 ]
 
-function FlowTab() {
+function FlowIcon({ type }: { type: string }) {
+  const cls = "w-7 h-7"
+  if (type === "user") return <User className={cn(cls, "text-emerald-400")} />
+  if (type === "database") return <Zap className={cn(cls, "text-amber-400")} />
+  if (type === "lock") return <Lock className={cn(cls, "text-violet-400")} />
+  return <Server className={cn(cls, "text-blue-400")} />
+}
+
+function JWTFlow() {
   const [step, setStep] = useState(0)
   const current = FLOW_STEPS[step]
-
-  function Icon({ type }: { type: string }) {
-    const cls = "w-7 h-7"
-    if (type === "user") return <User className={cn(cls, "text-emerald-400")} />
-    if (type === "database") return <Zap className={cn(cls, "text-amber-400")} />
-    if (type === "lock") return <Lock className={cn(cls, "text-violet-400")} />
-    return <Server className={cn(cls, "text-blue-400")} />
-  }
 
   return (
     <div className="space-y-6">
@@ -699,7 +703,7 @@ function FlowTab() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="glass p-8 rounded-[32px] border-white/5 flex flex-col items-center justify-center text-center gap-3">
               <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-                <Icon type={current.fromIcon} />
+                <FlowIcon type={current.fromIcon} />
               </div>
               <p className="text-sm font-black text-gray-300">{current.from}</p>
             </div>
@@ -709,7 +713,7 @@ function FlowTab() {
             </div>
             <div className="glass p-8 rounded-[32px] border-white/5 flex flex-col items-center justify-center text-center gap-3">
               <div className="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-                <Icon type={current.toIcon} />
+                <FlowIcon type={current.toIcon} />
               </div>
               <p className="text-sm font-black text-gray-300">{current.to}</p>
             </div>

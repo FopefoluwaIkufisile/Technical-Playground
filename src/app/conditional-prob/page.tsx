@@ -29,7 +29,7 @@ export default function ConditionalProbPage() {
       </nav>
       <div className="max-w-7xl mx-auto space-y-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-gradient-to-br from-white via-white to-emerald-400 bg-clip-text text-transparent">Conditional Probability</h1>
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-linear-to-br from-white via-white to-emerald-400 bg-clip-text text-transparent">Conditional Probability</h1>
           <p className="text-gray-500 text-sm leading-relaxed max-w-2xl">P(A|B), Bayes&apos; Theorem, independence, and the probability tree — understanding when events influence each other and how to update beliefs with new evidence.</p>
         </motion.div>
         <div className="flex gap-2 flex-wrap pb-2 border-b border-white/5">

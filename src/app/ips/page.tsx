@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  ArrowLeft, Router, Globe, Laptop, Smartphone, Server, Send,
-  Plus, Trash2, Info, ChevronRight, Share2, Network, Lock, Shield, Zap
+  ArrowLeft, Router, Send,
+  Plus, Trash2, Info, ChevronRight, Network
 } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
@@ -42,7 +42,7 @@ export default function IPsPage() {
       </nav>
       <div className="max-w-7xl mx-auto space-y-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-gradient-to-br from-white via-white to-indigo-400 bg-clip-text text-transparent">IP & NAT</h1>
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-linear-to-br from-white via-white to-indigo-400 bg-clip-text text-transparent">IP & NAT</h1>
           <p className="text-gray-500 text-sm leading-relaxed max-w-2xl">How private networks share a single public IPv4 address — SNAT for outbound traffic, DNAT for port forwarding, IPv4 exhaustion, and why NAT matters for security.</p>
         </motion.div>
         <div className="flex gap-2 flex-wrap pb-2 border-b border-white/5">
@@ -101,7 +101,7 @@ function ConceptsTab() {
               <div className="bg-black/40 p-3 rounded-xl font-mono text-[10px] space-y-1">
                 <p><span className="text-gray-600">Original:  </span> 192.168.1.10:54321 → 8.8.8.8:443</p>
                 <p><span className="text-gray-600">After SNAT:</span> <span className="text-indigo-400">203.0.113.45:41293</span> → 8.8.8.8:443</p>
-                <p className="text-gray-700">// Router remembers: 41293 maps to 192.168.1.10:54321</p>
+                <p className="text-gray-700">{"// Router remembers: 41293 maps to 192.168.1.10:54321"}</p>
               </div>
             </div>
             <div className="p-5 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 space-y-3">
@@ -127,9 +127,9 @@ function SimulatorTab() {
   const [dir, setDir] = useState<"out" | "in">("out")
   const [running, setRunning] = useState(false)
   const [logs, setLogs] = useState<string[]>([])
-  const addLog = (msg: string) => setLogs(p => [msg, ...p].slice(0, 5))
+  const addLog = useCallback((msg: string) => setLogs(p => [msg, ...p].slice(0, 5)), [])
 
-  const sendOutbound = async (dev: typeof DEVICES[0]) => {
+  const sendOutbound = useCallback(async (dev: typeof DEVICES[0]) => {
     if (running) return
     setRunning(true); setDir("out"); setActive(dev.id)
     const port = Math.floor(Math.random() * 10000) + 30000
@@ -140,9 +140,9 @@ function SimulatorTab() {
     addLog(`SNAT: ${dev.ip}:443 → ${PUBLIC_IP}:${port}`)
     await new Promise(r => setTimeout(r, 600))
     setRunning(false); setActive(null)
-  }
+  }, [running, addLog])
 
-  const testInbound = async (rule: Rule) => {
+  const testInbound = useCallback(async (rule: Rule) => {
     if (running) return
     setRunning(true); setDir("in")
     addLog(`Internet → ${PUBLIC_IP}:${rule.extPort}`)
@@ -153,7 +153,7 @@ function SimulatorTab() {
     addLog(`DNAT: ${PUBLIC_IP}:${rule.extPort} → ${rule.intIp}:${rule.intPort}`)
     await new Promise(r => setTimeout(r, 600))
     setRunning(false); setActive(null)
-  }
+  }, [running, addLog])
 
   const testUnforwarded = async () => {
     if (running) return

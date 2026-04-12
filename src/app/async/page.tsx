@@ -1,11 +1,10 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  ArrowLeft, Play, Zap, Clock, Code2, Layers, Cpu, CheckCircle2,
-  XCircle, RefreshCw, Info, AlertCircle, Trophy, ChevronRight,
-  GitBranch, AlertTriangle
+  ArrowLeft, Play, Clock, Cpu, CheckCircle2,
+  XCircle, RefreshCw, Info, ChevronRight
 } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
@@ -35,7 +34,7 @@ export default function AsyncPage() {
 
       <div className="max-w-7xl mx-auto space-y-8">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-3">
-          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-gradient-to-br from-white via-white to-cyan-400 bg-clip-text text-transparent">
+          <h1 className="text-5xl sm:text-6xl font-black tracking-tighter bg-linear-to-br from-white via-white to-cyan-400 bg-clip-text text-transparent">
             Async / Await
           </h1>
           <p className="text-gray-500 text-sm leading-relaxed max-w-2xl">
@@ -103,15 +102,15 @@ function ConceptsTab() {
             <code className="text-cyan-300">async/await</code> is <strong className="text-white">syntactic sugar over Promises</strong>. Under the hood, an <code>async</code> function always returns a Promise, and <code>await</code> suspends the function, yielding control to the event loop until the awaited Promise settles.
           </p>
           <div className="bg-black/40 p-5 rounded-2xl border border-cyan-500/10 font-mono text-xs leading-7">
-            <p className="text-gray-600">// These are exactly equivalent:</p>
+            <p className="text-gray-600">{"// These are exactly equivalent:"}</p>
             <div className="mt-2">
-              <p className="text-cyan-400">// Promise chain:</p>
+              <p className="text-cyan-400">{"// Promise chain:"}</p>
               <p>fetch(<span className="text-emerald-400">&apos;/api/user&apos;</span>).then(r =&gt; r.json()).then(user =&gt; {"{"}</p>
               <p className="pl-4">console.log(user);</p>
               <p>{"}"}).catch(err =&gt; console.error(err));</p>
             </div>
             <div className="mt-3">
-              <p className="text-cyan-400">// async/await:</p>
+              <p className="text-cyan-400">{"// async/await:"}</p>
               <p>async function getUser() {"{"}</p>
               <p className="pl-4">try {"{"}</p>
               <p className="pl-8">const res = <span className="text-cyan-400">await</span> fetch(<span className="text-emerald-400">&apos;/api/user&apos;</span>);</p>
@@ -174,10 +173,12 @@ type AsyncPattern = "sequential" | "parallel_all" | "parallel_race" | "allSettle
 
 function SimulatorTab() {
   const [pattern, setPattern] = useState<AsyncPattern>("parallel_all")
-  const [items, setItems] = useState([
-    { id: "1", name: "User Profile", status: "idle" as const, progress: 0, delay: 1500 },
-    { id: "2", name: "Order History", status: "idle" as const, progress: 0, delay: 2500 },
-    { id: "3", name: "Preferences", status: "idle" as const, progress: 0, delay: 1000 },
+  type ItemStatus = "idle" | "pending" | "resolved" | "rejected"
+  type Item = { id: string; name: string; status: ItemStatus; progress: number; delay: number }
+  const [items, setItems] = useState<Item[]>([
+    { id: "1", name: "User Profile", status: "idle", progress: 0, delay: 1500 },
+    { id: "2", name: "Order History", status: "idle", progress: 0, delay: 2500 },
+    { id: "3", name: "Preferences", status: "idle", progress: 0, delay: 1000 },
   ])
   const [isRunning, setIsRunning] = useState(false)
   const [allowFailure, setAllowFailure] = useState(false)
@@ -185,13 +186,13 @@ function SimulatorTab() {
   const [elapsed, setElapsed] = useState<number | null>(null)
 
   const reset = () => {
-    setItems(p => p.map(i => ({ ...i, status: "idle" as const, progress: 0 })))
+    setItems(p => p.map(i => ({ ...i, status: "idle" as ItemStatus, progress: 0 })))
     setGlobalStatus("idle"); setElapsed(null)
   }
 
   const simulateItem = (id: string, delay: number) =>
     new Promise<void>((resolve, reject) => {
-      setItems(p => p.map(i => i.id === id ? { ...i, status: "pending" as const } : i))
+      setItems(p => p.map(i => i.id === id ? { ...i, status: "pending" as ItemStatus } : i))
       let current = 0
       const interval = setInterval(() => {
         current += 10
@@ -199,8 +200,8 @@ function SimulatorTab() {
         if (current >= 100) {
           clearInterval(interval)
           const fail = allowFailure && Math.random() < 0.4
-          setItems(p => p.map(i => i.id === id ? { ...i, status: fail ? "rejected" as const : "resolved" as const } : i))
-          fail ? reject(`${id} failed`) : resolve()
+          setItems(p => p.map(i => i.id === id ? { ...i, status: (fail ? "rejected" : "resolved") as ItemStatus } : i))
+          if (fail) reject(`${id} failed`); else resolve()
         }
       }, delay / 10)
     })
