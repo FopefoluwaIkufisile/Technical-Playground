@@ -1,0 +1,878 @@
+Chapter 1
+
+S TAT 2400 M ODULE 1: S OME B ASIC C ONCEPTS Page 1
+Module 1: Some Basic Concepts
+1.1 Review of Set Theory and Notation (Weiss §1.2)
+I Some Notation and Definitions:
+• A set is a collection of distinct elements (numbers, individuals, objects, . . . ).
+• If A is a set and x is an element of A, we write: x 2 A.
+• If y is not an element of A, we write y /2 A.
+• ; denotes the empty set and U the Universal set, i.e. the set of all elements of interest.
+• The complement of A, denoted Ac is
+Ac = x 2 U : x /2 A .
+This is sometimes also denoted A 0 or  ̄A.
+• The set A is a subset of B, denoted A ⇢ B, if all elements of A also belong to B.
+In other words, if x 2 A =) x 2 B, then A ⇢ B.
+• Two sets A and B are equal (A = B)
+() A ⇢ B and B ⇢ A.
+• The union of A and B is
+A [ B = x 2 U : x 2 A or x 2 B ,
+i.e. it is the set of all elements belonging to at least one of the two sets.
+As a result: A [ ; = A and A [ Ac = U.
+• The intersection of A and B is
+A \ B = x 2 U : x 2 A and x 2 B = AB,
+i.e. it is the set of all elements belonging to both sets.
+As a result: A \ ; = ;.
+• The sets A and B are disjoint or mutually exclusive if A \ B = AB = ;,
+i.e. if they have no elements in common.
+STAT 2400 Lecture Notes A. Leblanc (January 24, 2022)
+S TAT 2400 M ODULE 1: S OME B ASIC C ONCEPTS Page 2
+Proposition 1.1. Commutative Laws.
+Let A and B be subsets of U.
+1. A [ B = B [ A
+2. A \ B = B \ A or AB = BA
+Proposition 1.2. Associative Laws.
+Let A, B and C be subsets of U.
+1. A [ (B [ C) = (A [ B) [ C = A [ B [ C
+2. A \ (B \ C) = (A \ B) \ C = A \ B \ C or A \ (BC) = (AB) \ C = ABC
+Proposition 1.3. Distributive Laws.
+Let A, B and C be subsets of U.
+1. A \ (B [ C) = (A \ B) [ (A \ C)
+2. A [ (B \ C) = (A [ B) \ (A [ C)
+Proposition 1.4. De Morgan’s Laws.
+Let A and B be subsets of U.
+1. (A [ B)c = Ac \ B c or (A [ B)c = Ac B c
+2. (A \ B)c = Ac [ B c or (AB)c = Ac [ B c
+I Some more notation and definitions:
+Let A1 , A2 , . . . , An be subsets of U.
+• Then, we write
+A1 [ A2 [ . . . [ An =
+n[
+i=1
+Ai
+=
+⌦
+x 2 U : x 2 Ai for some i = 1, 2 . . . , n
+↵
+,
+i.e. the set of x’s belonging to at least one of A1 , A2 , . . . , An .
+• We also write
+A1 \ A2 \ . . . \ An =
+n\
+i=1
+Ai
+=
+⌦
+x 2 U : x 2 Ai for all i = 1, 2 . . . , n
+↵
+,
+i.e. the set of x’s belonging to all of A1 , A2 , . . . , An .
+STAT 2400 Lecture Notes A. Leblanc (January 24, 2022)
+S TAT 2400 M ODULE 1: S OME B ASIC C ONCEPTS Page 3
+• The sets A1 , A2 , . . . , A n are said to be pairwise disjoint or mutually exclusive if
+Ai \ Aj = ; for i 6 = j.
+Proposition 1.5. Generalized Distributive Laws.
+Let A and B 1 , B 2 , . . . be subsets of U.
+1. A \
+✓ n[
+i=1
+B i
+◆
+=
+n[
+i=1
+AB i for all n  2
+2. A [
+✓ n\
+i=1
+B i
+◆
+=
+n\
+i=1
+(A [ B i ) for all n  2
+Proposition 1.6. Generalized De Morgan’s Laws.
+Let A1 , A2 , . . . be subsets of U.
+1.
+✓ n[
+i=1
+Ai
+◆ c
+=
+n\
+i=1
+Ac
+i for all n  2
+2.
+✓ n\
+i=1
+Ai
+◆ c
+=
+n[
+i=1
+Ac
+i for all n  2
+I One last definition:
+• The sets A1 , A2 , . . . , A n form a partition of B if
+1. Ai Aj = ; for all i 6 = j, (i.e. they are mutually exclusive),
+2. S n
+i=1 Ai = B.
+Essentially, each Ai is a distinct “piece” of B.
+• A and Ac always form a partition of U!
+STAT 2400 Lecture Notes A. Leblanc (January 24, 2022)
+S TAT 2400 M ODULE 1: S OME B ASIC C ONCEPTS Page 4
+1.2 Sample Space and Events (Weiss §2.1)
+I A few definitions:
+• A random experiment is an action whose outcome cannot be predicted with certainty.
+Think of: – flipping a coin,
+– rolling a die,
+– arrival of patients at the ER in a hospital,
+– playing the lotto 6/49,
+– etc.
+• The set of all possible outcomes for a random experiment is called the sample space. It is
+denoted ⌦ (S is also used sometimes).
+To denote an individual outcome, we use !.
+• An event is a subset of the sample space.
+Events are denoted by capital letters (they are sets).
+• A simple event is an event consisting of only one outcome.
+• An event E is said to occur when the outcome of the random experiment is an element of
+E.
+Example 1.1. Flipping a card from a regular 52 card deck (cf. Figure 2.2 from Weiss)
+Describe the sample space ⌦ for this random experiment, and consider the following three
+events:
+D: the card is a diamond,
+H: the card is a “high” card (i.e. 10, J, Q, K or A),
+F: the card is a “face” card (i.e. J, Q or K).
+Also, find at least three partitions of ⌦.
+Example 1.2. Rolling two dice (cf. Figure 2.1 from Weiss)
+Describe the sample space of this random experiment.
+Are the following events mutually exclusive?
+A: the sum is at most 4,
+B: at least one result of 4 or more,
+C: the difference between the two dice is 3,
+D: the sum of the dice is 7.
+STAT 2400 Lecture Notes A. Leblanc (January 24, 2022)
+S TAT 2400 M ODULE 1: S OME B ASIC C ONCEPTS Page 5
+1.3 Axioms of Probability (Weiss §2.2, 2.3)
+Definition 1.7. Kolmogorov’s Axioms
+Let ⌦ be the sample space of some random experiment.
+A function P defined on the events of ⌦ is called a probability measure if it satisfies
+the following three properties.
+1. The nonnegativity axiom:
+P(E)  0 for all events E ⇢ ⌦.
+2. The certainty axiom:
+P(⌦) = 1,
+i.e. one of the possible outcomes will occur.
+3. The additivity axiom:
+If A1 , A2 , . . . are mutually exclusive subsets of ⌦, then
+P
+✓ 1[
+i=1
+Ai
+◆
+=
+1X
+i=1
+P(Ai ).
+Proposition 1.8. Two consequences of Kolmogorov’s axioms
+1. For the empty set, we have P(;) = 0.
+2. Finite additivity:
+Let A1 , A2 , . . . be mutually exclusive events of ⌦. Then
+P
+✓ n[
+i=1
+Ai
+◆
+=
+nX
+i=1
+P(Ai ) for all n 2 N.
+STAT 2400 Lecture Notes A. Leblanc (January 24, 2022)
+S TAT 2400 M ODULE 1: S OME B ASIC C ONCEPTS Page 6
+Proposition 1.9. Finite or infinite countable sample space
+For any event E ⇢ ⌦,
+P(E) = X
+!2E
+P{!},
+i.e. P(E) is equal to the sum of the probabilities of each outcome in E. Also,
+X
+!2⌦
+P{!} = 1,
+i.e. the probabilities of all the outcomes in ⌦ sum to one.
+I Conclusion:
+We can assign probabilities to each outcome and calculate the probabilities of events by adding
+the probabilities of the individual outcomes!
+Example 1.3. Archery
+An archer fires at a target.
+Define the following events:
+A: the arrow lands inside the inner circle (i.e. the shot scores 3 pts or more),
+M: the arrow misses the target completely.
+Find P(A) and P(M).
+Proposition 1.10. Equal-likelihood model or classical probability model
+Let ⌦ be a finite sample space with equally likely outcomes. Then, for any event
+E ⇢ ⌦, we have
+P(E) = N(E)
+N(⌦) = nb. of outcomes in E
+nb. of outcomes in ⌦.
+STAT 2400 Lecture Notes A. Leblanc (January 24, 2022)
+S TAT 2400 M ODULE 1: S OME B ASIC C ONCEPTS Page 7
+I Note:
+The previous result implies that in the case of a finite sample space,
+0  P(E)  1 for any E ⇢ ⌦, and P(;) = 0.
+Example 1.4. (cf. Example 1.2 on page 4)
+When rolling two dice,
+⌦ =
+⌦
+(x, y) : x, y 2 {1, 2, . . . , 6}
+↵
+.
+Assume that the N(⌦) = 36 outcomes are equally likely. Find P(A), P(B), P(C) and P(D).
+Example 1.5. Flipping a coin 3 times
+What is the probability of seeing a sequence of at least 2 consecutive identical results?
+1.4 General Properties of Probability (Weiss §2.4)
+Proposition 1.11. Complementation Rule
+Let A ⇢ ⌦. Then,
+P(Ac ) = 1 - P(A).
+Proposition 1.12. Domination Principle
+If A ⇢ B ⇢ ⌦ are any events, then
+P(A)  P(B).
+I Two consequences of the domination principle:
+• For any E ⇢ ⌦, we have that P(E)  1.
+• For any A, B ⇢ ⌦,
+P(AB)  P(A)  P(A [ B) and P(AB)  P(B)  P(A [ B).
+Example 1.6. (cf. Example 1.4)
+Argue that D ⇢ B and verify that P(D)  P(B). Also, find the probability that the sum of the
+dice is not 7.
+STAT 2400 Lecture Notes A. Leblanc (January 24, 2022)
+S TAT 2400 M ODULE 1: S OME B ASIC C ONCEPTS Page 8
+Proposition 1.13. General Addition Rule for two events
+Let A, B ⇢ ⌦. Then,
+P(A [ B) = P(A) + P(B) - P(AB).
+I Proving the above property, we have obtained the following result that is often useful:
+P(Ac B) = P(B) - P(AB).
+Example 1.7. Defective CD’s
+Of all CD’s produced by a manufacturer,
+• 3% have a surface defect,
+• 8% have a balance defect,
+• 91% are defect-free.
+Find the probability a randomly selected CD has:
+• at least one type of defect,
+• both defects,
+• only a surface defect,
+• only a balance defect.
+Proposition 1.14. Inclusion-exclusion principle
+Let A1 , A2 , . . . be events (and subsets of ⌦). Then, for all n  2,
+P
+✓ n[
+i=1
+Ai
+◆
+=
+nX
+i=1
+P(Ai ) - X X
+i1 <i 2
+P(Ai1 Ai 2 ) + X X X
+i 1 <i2 <i3
+P(Ai1 Ai 2 Ai 3 ) + · · ·
++ ( -1)k+1 X X X
+i1 <i 2 <···<ik
+P(Ai 1 Ai 2 · · · Ai k ) + · · · + ( -1)n+1 P(A1 A2 · · · An ).
+In other words, the probability of the union is equal to
+• the sum of the probabilities of each event,
+• - the sum of the probabilities of all 2 ⇥ 2 (pairwise) intersections,
+• + the sum of the probabilities of the 3 ⇥ 3 intersections,
+• etc.
+STAT 2400 Lecture Notes A. Leblanc (January 24, 2022)
+S TAT 2400 M ODULE 1: S OME B ASIC C ONCEPTS Page 9
+Example 1.8. (cf. Example 1.4 on page 7)
+We have defined:
+A: the sum is at most 4,
+D: the sum of the dice is 7,
+E: there is at least one result of 3.
+Calculate P(A [ D [ E).
+Example 1.9. Wrong numbers?
+We are told that, in a study of 1000 subscribers to a certain magazine, the following data was
+reported:
+P: Professionals, N(P) = 312, N(MP) = 86, N(MPC) = 25.
+M: Married, N(M) = 470, N(PC) = 42,
+C: College graduates, N(C) = 525, N(MC) = 147,
+How can we tell that there is an error in the reported data?
+STAT 2400 Lecture Notes A. Leblanc (January 24, 2022)
+S TAT 2400 M ODULE 1: S OME B ASIC C ONCEPTS Page 10
+STAT 2400 Lecture Notes A. Leblanc (January 24, 2022)
+
+Chapter 2
+
+
+1
+
+Automatic Zoom
+S TAT 2400 M ODULE 2: C OMBINATORIAL P ROBABILITY Page 11
+Module 2: Combinatorial Probability
+I The classical probability model:
+In the case of a finite sample space with equally likely outcomes, we use
+P(E) = N(E)
+N(⌦) for any E ⇢ ⌦,
+so that we must be able to count the number of outcomes in the sample space and events.
+Listing the outcomes is sometimes enough. . . but what about difficult problems?
+2.1 Counting, Permutations and Combinations (Weiss §3.1, 3.2)
+Example 2.1. Coin and die
+A random experiment consists of flipping a coin and then rolling a six-sided die.
+What is N(⌦)?
+Proposition 2.1. Basic Counting Rule (BCR)
+If r experiments are to be performed in such a way that
+• there are m1 outcomes to the 1st experiment,
+• for each outcome of experiment 1, there are m2 outcomes to the 2nd experiment,
+• for each outcome of experiments 1 and 2, there are m3 outcomes to the 3rd exper-
+iment,
+• etc.
+Then, altogether, there are
+m1 · m2 · · · · · mr =
+rY
+i=1
+mi
+outcomes to the r experiments.
+Example 2.1. (cont’d)
+Find N(⌦) by using the BCR.
+Example 2.2. Flipping a coin 3 times (cf. Example 1.5)
+We have seen that N(⌦) = 8. Find this using the BCR.
+STAT 2400 Lecture Notes A. Leblanc (January 24, 2022)
+S TAT 2400 M ODULE 2: C OMBINATORIAL P ROBABILITY Page 12
+Example 2.3. License plates
+How many Manitoba license plates of three letters followed by three digits are there?
+Example 2.4. 5-digit PINs
+A 5-digit PIN is to be selected.
+Find the number of ways this can be done if
+• there are no restrictions,
+• no digit can occur twice,
+• adjacent digits cannot be identical.
+Definition 2.2. Permutations
+A permutation of r objects from a collection of m objects is any ordered arrangement
+of r distinct objects selected from the m objects.
+(m)r denotes the number of possible permutations of r objects selected from m.
+Proposition 2.3. Permutation Rule
+(m)r = m!
+(m - r)!
+Recall that 0! = 1.
+I Note:
+• (m)m denotes the number of permutations of m objects among themselves,
+and (m)m = m!
+• Also, (m)0 = 1.
+Example 2.4. (cont’d)
+How many options are there if no digit can occur twice?
+Example 2.5. Four-letter words
+How many four-letter words can be made from the english alphabet,
+• if repeated letters are allowed,
+STAT 2400 Lecture Notes A. Leblanc (January 24, 2022)
+
+
+Chapter 3
+
+
+1
+
+Automatic Zoom
+S TAT 2400 M ODULE 3: C ONDITIONAL P ROBABILITIES AND I NDEPENDENCE Page 19
+Module 3: Conditional Probabilities and Independence
+3.1 Conditional Probabilities (Weiss §4.1, 4.2)
+Definition 3.1. Conditional probability
+Let A and B be events of ⌦. Then, P(A|B) is the conditional probability that event A
+occurs, assuming that event B is known to occur.
+This is usually referred to as the probability of A given B.
+Example 3.1. Rolling a die
+Consider rolling a fair die and let
+A : the result is even,
+B : the result is not a 1.
+Find P(A), P(B), P(A|B) and P(B|A).
+Proposition 3.2. Conditional Probability Rule
+Let A and B be events of ⌦ such that P(B) > 0. Then,
+P(A|B) = P(AB)
+P(B) .
+I Note:
+For the classical probability model, this implies that
+P(A|B) = N(AB)
+N(B) .
+Example 3.2. Having two boys
+A family has two children. Assuming that boys and girls are equally likely, what is the proba-
+bility the family has two boys given they have at least one?
+Example 3.3. Rolling two dice
+When rolling two fair dice, what is the probability of having at least one result of 6, given that
+the sum of the dice is i? (i = 2, 3, . . . , 12)
+STAT 2400 Lecture Notes A. Leblanc (February 18, 2022)
+S TAT 2400 M ODULE 3: C ONDITIONAL P ROBABILITIES AND I NDEPENDENCE Page 20
+I Note:
+Conditional probabilities are probability measures, i.e. they satisfy the axioms of probability!
+Indeed, let A ⇢ ⌦ such that P(A) > 0. Then
+• P(E|A)  0 for any event E ⇢ ⌦,
+• P(⌦|A) = 1,
+• if E 1 , E2 , . . . are mutually exclusive events of ⌦, then
+P
+✓ 1[
+i=1
+Ei
+
+
+A
+◆
+=
+1X
+i=1
+P(E i |A).
+This implies that conditional probabilities have the same properties as unconditional probabili-
+ties. . . For example,
+- finite additivity for pairwise disjoint events,
+- complementation rule,
+- domination principle,
+- inclusion/exclusion principle,
+- etc.
+Proposition 3.3. Multiplication Rule for two events
+Let A and B be events of ⌦ such that P(B) > 0. Then,
+P(AB) = P(B)P(A|B).
+Example 3.4. P  ́olya’s urn model
+An urn originally contains one red ball and one white ball.
+One ball is drawn at random from the urn, all balls being equally likely to be selected. It is then
+replaced in the urn along with an extra ball of the same color.
+This selection process is then repeated many times. . .
+(This is a special case of P  ́olya’s extremely famous urn model.)
+What is the probability that a red ball is drawn
+• on the first two draws,
+• on the first three draws.
+STAT 2400 Lecture Notes A. Leblanc (February 18, 2022)
+
+
+Chapter 4
+
+
+1
+
+Automatic Zoom
+S TAT 2400 M ODULE 4: D ISCRETE RV’ S AND P ROBABILITY D ISTRIBUTIONS Page 27
+Module 4: Discrete Random Variables and
+Probability Distributions
+4.1 Discrete RV’s and Probability Mass Functions (Weiss §5.1,
+5.2)
+I It is frequent that interest lies in a function of the outcome, rather than on the outcome itself.
+Example 4.1. Game of Craps
+Playing the game of craps: at first, the player rolls two fair dice.
+Then, depending on the sum of the two dice,
+• if this sum is 7 or 11 : the player wins,
+• if this sum is 2, 3 or 12 : the player loses,
+• otherwise : the payer re-rolls until the same sum or 7 is obtained,
+! if same sum : the player wins,
+! if 7 : the player loses.
+Focusing only on the initial sum of the two dice, the sample space of the experiment is
+⌦ = ! = (! 1 , !2 ) : 1  ! 1  6, 1  ! 2  6 .
+It should be noted that the specific outcome ! 2 ⌦ is unimportant.
+Rather, what is important is the sum ! 1 + ! 2 .
+Definition 4.1. Random Variable (RV)
+A random variable is a real-valued function whose domain is the sample space ⌦,
+i.e. it is a function X : ⌦ ! R.
+Example 4.1. (cont’d)
+To be more formal, we write
+X(!) = ! 1 + ! 2 ,
+so that X represents the sum of the two dice. Now, let
+Ai = ! 2 ⌦ : X(!) = i ,
+which is abbreviated as Ai = {X = i}. Interpret the event A10 and calculate P(A10 ).
+STAT 2400 Lecture Notes A. Leblanc (March 4, 2022)
+S TAT 2400 M ODULE 4: D ISCRETE RV’ S AND P ROBABILITY D ISTRIBUTIONS Page 28
+Example 4.2. Red and Blue balls
+An urn contains n red balls and n + 1 blue balls. (n  2)
+Two balls are to be drawn without replacement from the urn by a gambler who pays $1 to play.
+Depending on the outcome of the draw, the player is then payed back
+• $2 if both balls are red,
+• $1 if one ball is red and the other is blue,
+• nothing if both balls are blue.
+As we are only interested in the result of the bet, we define
+X : gambler’s net gain when playing the game.
+Formally describe ⌦ for the random experiment consisting of drawing two balls from the urn
+and define X(!) as a function of the outcome of this experiment. Also, interpret the events
+Ai = {! 2 ⌦ : X(!) = i}
+and calculate P(Ai ) for relevant values of i.
+Definition 4.2. Discrete Random Variable
+A discrete random variable is one for which there exists a set K that is finite or infinite
+countable such that
+P(X 2 K) = 1.
+As a consequence, if the set of possible values for X, called the range of X and denoted
+R X , is finite or infinite countable, then X is a discrete random variable.
+I There are other types or random variables!
+(Recall continuous random variables and normal distributions. . . )
+For example, heights, weights and waiting times are often continuous.
+I In examples 4.1 and 4.2, R X is finite so that X is a discrete RV.
+Example 4.3. (See Example 3.10)
+When rolling a fair die until a result of 6 is obtained, let
+X : nb. of rolls needed to see a 6 for the first time.
+Argue that X is a discrete random variable and find P(X = n) for n  1.
+STAT 2400 Lecture Notes A. Leblanc (March 4, 2022)
+
+
+Chapter 5
+
+
+1
+
+Automatic Zoom
+S TAT 2400 M ODULE 5: C ONTINUOUS RV’ S Page 43
+Module 5: Continuous RV’s and their Distributions
+5.1 Basic Definition (Weiss §8.1)
+Definition 5.1. Continuous Random Variable
+A random variable is called a continuous random variable if
+P(X = x) = 0 for all x 2 R X .
+I Notes:
+• The range R X of a continuous random variable X is infinite and uncountable. (Otherwise,
+X would be discrete!)
+In other words, R X is an interval of the real line or the union of many such intervals.
+• Classical examples are: heights, weights, waiting times, etc. (measurements of some kind).
+• Unlike what we did in the discrete setup, for any given value x 2 R X , the probability that
+X = x is not what we will be interested in. (It is zero!)
+Rather, we will be interested in the probability that X is close to x, that is, something like
+P(x - h  X  x + h) or P(x  X  x + h) for some small h > 0.
+• Some random variables are not discrete nor continuous.
+5.2 Cumulative Distribution Functions (Weiss §8.2)
+Definition 5.2. Cumulative Distribution Function
+The cumulative distribution function (CDF) of a random variable X, denoted F X , is
+the real-valued function of R ! [0, 1] defined by
+F X (x) = P(X  x) for all x 2 R.
+The CDF is sometimes also referred to as distribution function or cumulative distri-
+bution.
+I Notes:
+• The CDF of a random variable is well defined for any type of random variable (discrete,
+continuous or other).
+• The CDF fully determines the probability distribution of a random variable.
+STAT 2400 Lecture Notes A. Leblanc (March 25, 2022)
+S TAT 2400 M ODULE 5: C ONTINUOUS RV’ S Page 44
+Example 5.1. CDF of a discrete RV
+A discrete random variable Y has the following PMF
+y 0 1 2 4
+P Y (y) 1/10 3/10 2/10 4/10
+Obtain and graph the CDF of Y.
+Example 5.2. A given CDF
+Assume the random variable X has CDF F X as shown on the next graph.
+0 1 2 3 4
+0.0 0.2 0.4 0.6 0.8 1.0
+X
+F(x)
+Calculate the following probabilities:
+• P(X = 3) • P(X < 2)
+• P(X  3/2) • P(2 < X  3)
+Proposition 5.3. Basic Properties of CDF’s
+The CDF F X of a random variable X satisfies the following properties.
+1. F X is a nondecreasing function.
+2. F X is everywhere right-continuous.
+3. limx!-1 F X (x) = 0.
+4. limx!1 F X (x) = 1.
+STAT 2400 Lecture Notes A. Leblanc (March 25, 2022)
+
+
+Chapter 6
+
+
+1
+
+Automatic Zoom
+S TAT 2400 M ODULE 6: E XPECTED VALUES Page 61
+Module 6: Expected Values
+6.1 Expected Value (Weiss §7.1, 7.2, 10.1, 10.2)
+I Just as probabilities can be interpreted as long-run proportions, the mean of a random vari-
+able represents its long-run average.
+Definition 6.1. Expected Value of a Discrete RV
+Let X be a discrete random variable with PMF P X . Whenever
+X
+x2R x
+|x| P X (x) < 1, (6.1)
+the expected value of X is given by
+E(X) = X
+x2R X
+xP X (x).
+Definition 6.2. Expected Value of a Continuous RV
+Let X be a continuous random variable with PDF fX . Whenever
+Z
+R
+|x| fX (x) dx < 1, (6.2)
+the expected value of X is given by
+E(X) =
+Z
+R
+x fX (x) dx.
+I Notes:
+• The expected value is a weighted average of the values of X and the balance point of the
+distribution of X.
+• It it often denoted μX and also referred to as the mean, expectation or first moment of X.
+• The requirements (6.1) and (6.2) are always satisfied when X has finite range.
+Example 6.1. Rolling a die (refer to Example 4.6)
+Let X denote the outcome when rolling a fair die, and Y the outcome when rolling a loaded die
+for which the probability of getting a 6 on any roll is 7/10 and all other outcomes are equally
+likely.
+Calculate and interpret E(X) and E(Y).
+STAT 2400 Lecture Notes A. Leblanc (April 18, 2022)
+S TAT 2400 M ODULE 6: E XPECTED VALUES Page 62
+Example 6.2. Archery (refer to Examples 5.3 and 5.4)
+An archer fires an arrow at a circular target with a 1 m radius. It is assumed that the arrow is
+equally likely to hit any location on the target (and won’t miss the target).
+Find the expected distance between the point of impact and the centre of the target.
+Proposition 6.3. Expected Values for common Discrete RV’s
+The expected value of the discrete random variables introduced in Module 4 are
+X E(X)
+B(n, p) np
+G(p) 1/p
+NB(r, p) r/p
+H(N, n, p) np
+P() 
+Example 6.3. Lotto 6/49 (refer to Example 4.8)
+Recall that on each draw of Lotto 6/49, the probability of winning a prize is p = 0.01864 when
+buying a single ticket.
+• What is the expected number of prizes won by a player over a one-year period?
+• On the average, how many draws are necessary to win a first prize?
+• On the average, how many draws are necessary to win 5 prizes?
+Proposition 6.4. Expected Values for Common Continuous RV’s
+The expected value of the continuous random variables introduced in Module 5 are
+X E(X)
+Unif(a, b) (a + b)/2
+Exp() 1/
+N(μ, 2 ) μ
+Gamma(↵, ) ↵/
+Beta(a, b) a/(a + b)
+STAT 2400 Lecture Notes A. Leblanc (April 18, 2022)
+
+
+Sample finals a
+
+
+1
+
+Automatic Zoom
+University of Manitoba
+Department of Statistics
+STAT 2400
+Introduction to Probability I
+Sample Final Exam (A)
+Duration: This is approximately a 2 hour exam.
+Question 1:
+Assume that X is a random variable with CDF given by
+F (x) =
+
+
+
+0 for x < 0,
+ax for 0 ≤ x < 1,
+bx + 1/2 for 1 ≤ x < 2,
+1 for x ≥ 2.
+If you are told X is a continuous random variable, what are the possible values of a and b?
+What are the possible values of a and b if you do not know if X is continuous or not?
+Question 2:
+It is assumed that the four engines of an airplane each fail independently of others with
+probability p during a flight. The airplane always takes off with its four engines in operation
+and can complete any flight as long as at least half of its engines are operative throughout
+the flight.
+(A) What is the probability that the airplane completes its next flight?
+(B) The plane just completed a flight. What is the probability that this flight was com-
+pleted with none of the engines failing?
+(C) What is the largest possible value of p that guarantees the probability that none of the
+engines fail during a flight is at least 98%?
+Question 3:
+An actuary determines that the claim size for a certain class of accidents is a random variable
+X with moment generating function
+MX (t) = 1
+(1 − 2500t)4 for t < 1/2500.
+Determine the mean and variance of the claim size for this class of accidents.
+1
+Question 4:
+Assume that a random variable X follows a Rayleigh distribution with density
+f (x) =
+{
+xe−x2/2 if x > 0,
+0 otherwise.
+Show that
+E[Xt] = 2t/2Γ(t/2 + 1).
+Also, use that result to find the mean and variance of X.
+Question 5:
+Let X be uniformly distributed on (−2, 2).
+Find the PDF of Y = X2.
+Question 6:
+Suppose you have a key ring with n keys, one of which is your house key. Further suppose
+that you get home after dark and can’t see the keys on the ring. You are to randomly try
+one key at a time until you get the correct key. Find the probability that you get the correct
+key on your kth try
+(A) if you are careful not to mix the keys you have tried with those you have not;
+(B) if you carelessly put back the keys you have tried with the ones you have not.
+Question 7:
+An insurance policy reimburses a loss up to a benefit limit of 10. The policyholder’s loss
+follows a distribution with density function
+f (x) =
+{
+2/x3 for x > 1,
+0 otherwise.
+What is the expected value of a benefit paid under this insurance policy?
+Question 8:
+An urn initially contains one red and one blue ball. At each stage, a ball is drawn at random
+and then replaced along with another ball of the same colour. (This is P ́olya’s urn model.)
+Let X denote the number of draws that are necessary to draw a blue ball for the first time.
+(For example, if the first three draws are red-red-blue, then X = 3.)
+(A) Obtain the probability mass function of X.
+2
+
+
+Sample finals B
+
+
+1
+
+Automatic Zoom
+University of Manitoba
+Department of Statistics
+STAT 2400
+Introduction to Probability I
+Sample Final Exam (B)
+Duration: This is approximately a 2 hour exam.
+Question 1:
+Assume that someone is to roll a six-sided die 10 times.
+(A) What is the probability that at least one result of six is obtained in the 10 die rolls?
+(B) What is the probability that no fives and sixes are obtained in the 10 die rolls?
+(C) Knowing that the first six is obtained on the 7th roll of the die, calculate the probability
+that 2 sixes are obtained in total.
+Question 2:
+In a shootout, Jonathan and Mario take turns trying to beat the goalkeeper to score a goal.
+The shootout is done in successive rounds where each player gets one attempt at scoring.
+Specifically, in the first round, Jonathan and Mario each get one attempt. If only one player
+scores, he is declared the winner and the shootout ends. If both players score on their
+attempt, or if both players don’t score, they move on to a second round. This is repeated
+until a player is declared the winner.
+Assume that, in any round, the probabilities that Jonathan and Mario score a goal are,
+respectively, 2/3 and 3/4. Finally, let X denote the number of rounds needed to end the
+shootout.
+(A) Justify that X has a geometric distribution with parameter p = 5/12.
+(B) What are the mean and variance of X?
+(C) Jonathan and Mario engage in a shootout every day of the week. What are the mean
+and variance of the total number of rounds played over the week?
+Question 3:
+Assume that X ∼ Unif(0, 2) and let Y = (X/2)1/a for some a > 0.
+Obtain and identify the distribution of Y .
+1
+Question 4:
+Let X be exponentially distributed with rate λ, with PDF given by
+f (x) =
+{
+λe−λx if x > 0,
+0 otherwise.
+(A) Show that the nth moment of X is E(Xn) = n!/λn.
+(B) Find Var(Xn).
+(C) Derive the moment generating function of X.
+Question 5:
+You first roll a six-sided die. Let N denote the outcome of rolling the die. You then proceed
+to draw N cards from a regular deck of 52 playing cards.
+(A) Obtain the probability that, among the cards drawn this way, there are no aces.
+(B) Knowing that all four aces were drawn, what is the probability that a six was rolled in
+the first part of the experiment?
+Question 6:
+Let A and B be two independent events of Ω such that P(A) > 0 and P(B) > 0.
+(A) Show that Ac and Bc are also independent.
+(B) Show that A and B cannot be disjoint events.
+Question 7:
+Let X be a continuous random variable representing the lifetime of an object (like an elec-
+trical component) having distribution function F and density F ′ = f . The hazard function
+H(t) associated with the random variable X is defined as
+H(t) = lim
+h→0
+P(t ≤ X < t + h|X ≥ t)
+h
+Show that the hazard rate satisfies
+H(t) = f (t)
+1 − F (t).
+Note that H(t) can be interpreted as the instantaneous failure rate of a functioning object
+at time t.
+2
+
+
+Sample finals c
+
+
+1
+
+Automatic Zoom
+University of Manitoba
+Department of Statistics
+STAT 2400
+Introduction to Probability I
+Sample Final Exam (C)
+Duration: This is approximately a 2 hour exam
+Question 1:
+A hand of five-card draw poker consists of 5 cards dealt at random from an ordinary deck
+of 52 playing cards. A full house is a poker hand consisting of a three-of-a-kind and a pair
+(for a total of five cards).
+(A) Verify that the probability of being dealt a full house in any given hand is 0.00144,
+when given to five decimal places.
+(B) Obtain a numerical approximation of the probability of being dealt a full house 32
+times out of 20,000 such poker hands.
+Can you be confident this approximation is accurate?
+Question 2:
+A filling station is supplied with gasoline once a week. If the weekly demand (in thousands
+of gallons of gasoline) is a random variable with PDF
+f (x) =
+{
+5(1 − x)4 for 0 < x < 1,
+0 otherwise,
+what need the capacity of the tank be so that the probability of the station running out of
+gasoline in a given week be 0.01?
+Question 3:
+Let X be a random variable with PMF given in the following table,
+x 1/2 1 2
+PX (x) 1/2 1/4 1/4
+and let Y = X + 1/X.
+Find the mean and variance of Y .
+1
+Question 4:
+The lifetime of a printer costing $200 is exponentially distributed with mean 2 years. The
+manufacturer agrees to pay a full refund to a buyer if the printer fails in its first year of use,
+and a one-half refund if the printer fails in its second year. No refund is given for failures
+after the second year of use.
+With such a policy, what is the expected refund for each printer sold?
+Question 5:
+Let X ∼ P (λ), with PMF given by
+PX (x) = e−λλx
+x! for x = 0, 1, . . .
+(A) Show that E[X(X − 1)(X − 2)] = λ3.
+(B) Use the above result to obtain the mean of X3.
+Question 6:
+Suppose that n individuals are sampled, with replacement, from a population of size N .
+(A) Find the probability that no individual is selected more than once.
+(B) Show that this probability approaches 1 as N → ∞ (when n is fixed).
+How should this result be interpreted?
+Question 7:
+Assume that X has PDF
+f (x) =
+{
+60(x − 1)2/x7 for x > 1,
+0 otherwise.
+Show that Y = 1/X ∼ Beta(4, 3).
+Question 8:
+Let A and B be two events of Ω such that A ⊂ B.
+(A) Show that
+P(B \ A) = P(B) − P(A),
+where the relative complement of A with respect to B, denoted B \ A, is the set of
+elements of B that do not belong to A.
+2
+
+
+note from lecturer
+
+Hi Everyone,
+
+The final exam will take place on April 20th from 6:00pm - 9:00pm in E2 Room 229 (Engineering Complex). The exam will cover everything from units 1-6 with a focus on units 4, 5 and 6.
+
+Things that will not be tested on the exam:
+
+Section 2.3 
+Proposition 4.8
+Definition 4.14
+Theorem 5.18
+Example 5.18
+Proposition 6.8 + Example 6.9
+Section 6.4 (Moment Generating Functions)
+The test is closed book, you are allowed to have a non-programmable calculator.
+
+There are sample tests posted with solutions for you to practice.
+
+Thanks
+
+Marcus 

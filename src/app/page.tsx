@@ -141,13 +141,33 @@ const projects = [
   },
   {
     id: "jwt",
-    title: "Lifecycle",
+    title: "Token Forge",
     category: "Security",
-    description: "Visualizing the handoff between Access and Refresh tokens.",
+    description: "Deep-dive into JWT structure, live encoder/decoder, auth flow, and vulnerabilities like alg:none.",
     icon: <Key className="w-6 h-6 text-indigo-400" />,
     path: "/jwt",
     color: "from-indigo-500/20 to-indigo-600/20",
     borderColor: "group-hover:border-indigo-500/50"
+  },
+  {
+    id: "oauth",
+    title: "OAuth Flow",
+    category: "Security",
+    description: "Visual OAuth 2.0 simulator — actors, authorization code flow, grant types, and attack vectors.",
+    icon: <Shield className="w-6 h-6 text-amber-400" />,
+    path: "/oauth",
+    color: "from-amber-500/20 to-amber-600/20",
+    borderColor: "group-hover:border-amber-500/50"
+  },
+  {
+    id: "cookies",
+    title: "Cookie Lab",
+    category: "Security",
+    description: "Cookie anatomy, Set-Cookie builder, request flow visualization, and XSS/CSRF/fixation exploits.",
+    icon: <Database className="w-6 h-6 text-teal-400" />,
+    path: "/cookies",
+    color: "from-teal-500/20 to-teal-600/20",
+    borderColor: "group-hover:border-teal-500/50"
   },
   {
     id: "storage-security",
