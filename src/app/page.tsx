@@ -180,6 +180,36 @@ const projects = [
     borderColor: "group-hover:border-rose-500/50"
   },
   {
+    id: "mfa",
+    title: "MFA Shield",
+    category: "Security",
+    description: "Multi-Factor Authentication vectors, OTP leakages, and insecure coding vulnerabilities.",
+    icon: <Shield className="w-6 h-6 text-rose-400" />,
+    path: "/mfa",
+    color: "from-rose-500/20 to-rose-600/20",
+    borderColor: "group-hover:border-rose-500/50"
+  },
+  {
+    id: "xss",
+    title: "XSS Injection",
+    category: "Security",
+    description: "Analyzing Cross-Site Scripting vectors, payloads, and defense-in-depth sanitization.",
+    icon: <Target className="w-6 h-6 text-red-400" />,
+    path: "/xss",
+    color: "from-red-500/20 to-red-600/20",
+    borderColor: "group-hover:border-red-500/50"
+  },
+  {
+    id: "ssrf",
+    title: "SSRF Puppeteer",
+    category: "Security",
+    description: "Abusing server trust to access local networks, loopsbacks, and AWS metadata APIs.",
+    icon: <Network className="w-6 h-6 text-orange-400" />,
+    path: "/ssrf",
+    color: "from-orange-500/20 to-orange-600/20",
+    borderColor: "group-hover:border-orange-500/50"
+  },
+  {
     id: "dns",
     title: "Atlas",
     category: "Networking",
