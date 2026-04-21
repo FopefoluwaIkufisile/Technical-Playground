@@ -3,10 +3,10 @@
 import { useState, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
-import { Binary, RefreshCw, Zap, Layers, Network, Key, Shield, Globe, Router, Wifi, Box, Radio, Cpu, Target, Lock, Database, GitBranch, Search, Filter, BarChart3, AreaChart, GraduationCap } from "lucide-react"
+import { Binary, RefreshCw, Zap, Layers, Network, Key, Shield, Globe, Router, Wifi, Box, Radio, Cpu, Target, Lock, Database, GitBranch, Search, Filter, BarChart3, AreaChart, GraduationCap, BookOpen } from "lucide-react"
 import { cn } from "@/lib/utils"
 
-type Category = "All" | "Systems" | "Networking" | "Frontend" | "Security" | "Math"
+type Category = "All" | "Systems" | "Networking" | "Frontend" | "Security" | "Math" | "Study"
 
 const projects = [
   {
@@ -318,10 +318,20 @@ const projects = [
     path: "/stat-mastery",
     color: "from-indigo-500/20 to-indigo-600/20",
     borderColor: "group-hover:border-indigo-500/50"
+  },
+  {
+    id: "psych-quiz",
+    title: "Psych Flashcards",
+    category: "Study",
+    description: "100-question lifespan development flashcard deck. Flip cards to reveal answers and track your session score.",
+    icon: <BookOpen className="w-6 h-6 text-violet-400" />,
+    path: "/psych-quiz",
+    color: "from-violet-500/20 to-purple-600/20",
+    borderColor: "group-hover:border-violet-500/50"
   }
 ]
 
-const categories: Category[] = ["All", "Systems", "Networking", "Frontend", "Security", "Math"]
+const categories: Category[] = ["All", "Systems", "Networking", "Frontend", "Security", "Math", "Study"]
 
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState<Category>("All")
