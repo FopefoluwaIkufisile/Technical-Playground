@@ -248,6 +248,51 @@ function getColor(topic: string) {
 
 const ALL_TOPICS = Array.from(new Set(QUESTIONS.map(q => q.topic))).sort()
 
+/* ── CHAPTER MAP ── */
+const CHAPTER_MAP: Record<number, number> = {
+  // Chapter 9 – Physical + Cognitive Development in Early Adulthood
+  1:9,2:9,3:9,4:9,5:9,6:9,7:9,8:9,9:9,10:9,11:9,14:9,15:9,16:9,18:9,19:9,20:9,
+  101:9,102:9,103:9,104:9,105:9,106:9,107:9,108:9,109:9,110:9,
+  111:9,112:9,113:9,114:9,115:9,116:9,117:9,118:9,119:9,120:9,
+  // Chapter 10 – Socioemotional Development in Early Adulthood
+  12:10,13:10,17:10,21:10,22:10,23:10,24:10,25:10,26:10,27:10,
+  28:10,29:10,30:10,31:10,32:10,33:10,34:10,35:10,36:10,37:10,38:10,39:10,40:10,
+  121:10,122:10,123:10,124:10,125:10,126:10,127:10,128:10,129:10,130:10,
+  131:10,132:10,133:10,134:10,135:10,136:10,137:10,138:10,139:10,140:10,
+  // Chapter 11 – Physical + Cognitive Development in Middle + Late Adulthood
+  41:11,42:11,43:11,44:11,45:11,46:11,47:11,48:11,49:11,50:11,
+  51:11,52:11,53:11,54:11,55:11,56:11,57:11,58:11,59:11,60:11,
+  141:11,142:11,143:11,144:11,145:11,146:11,147:11,148:11,149:11,150:11,
+  151:11,152:11,153:11,154:11,155:11,156:11,157:11,158:11,159:11,160:11,
+  // Chapter 12 – Socioemotional Development in Middle + Late Adulthood
+  61:12,62:12,63:12,64:12,65:12,66:12,67:12,68:12,69:12,70:12,
+  71:12,72:12,73:12,74:12,75:12,76:12,77:12,78:12,79:12,80:12,
+  161:12,162:12,163:12,164:12,165:12,166:12,167:12,168:12,169:12,170:12,
+  171:12,172:12,174:12,175:12,176:12,177:12,178:12,179:12,180:12,
+  // Chapter 13 – Death, Dying, and Grieving
+  81:13,82:13,83:13,84:13,85:13,86:13,87:13,88:13,89:13,90:13,
+  91:13,92:13,93:13,94:13,95:13,96:13,97:13,98:13,99:13,100:13,
+  173:13,181:13,182:13,183:13,184:13,185:13,186:13,187:13,188:13,189:13,
+  190:13,191:13,192:13,193:13,194:13,195:13,196:13,197:13,198:13,199:13,200:13,
+}
+
+const CHAPTERS = [
+  { num: 9,  label: "Ch 9",  title: "Physical & Cognitive (Early Adulthood)",        color: "violet" },
+  { num: 10, label: "Ch 10", title: "Socioemotional (Early Adulthood)",               color: "pink" },
+  { num: 11, label: "Ch 11", title: "Physical & Cognitive (Middle/Late Adulthood)",   color: "sky" },
+  { num: 12, label: "Ch 12", title: "Socioemotional (Middle/Late Adulthood)",         color: "amber" },
+  { num: 13, label: "Ch 13", title: "Death, Dying & Grieving",                        color: "slate" },
+]
+
+
+const CHAPTER_ACTIVE: Record<string, string> = {
+  violet: "bg-violet-600 border-violet-400 text-white shadow-lg shadow-violet-500/20",
+  pink:   "bg-pink-600 border-pink-400 text-white shadow-lg shadow-pink-500/20",
+  sky:    "bg-sky-600 border-sky-400 text-white shadow-lg shadow-sky-500/20",
+  amber:  "bg-amber-600 border-amber-400 text-white shadow-lg shadow-amber-500/20",
+  slate:  "bg-slate-600 border-slate-400 text-white shadow-lg shadow-slate-500/20",
+}
+
 /* ── FLIP CARD ── */
 function FlipCard({ question, index, total, onPrev, onNext, isRevealed, setRevealed }: {
   question: Question
@@ -411,14 +456,23 @@ function FlipCard({ question, index, total, onPrev, onNext, isRevealed, setRevea
 /* ── MAIN PAGE ── */
 export default function PsychQuizPage() {
   const [activeTopic, setActiveTopic] = useState<string>("All")
+  const [activeChapter, setActiveChapter] = useState<number | "All">("All")
   const [shuffled, setShuffled] = useState(false)
   const [index, setIndex] = useState(0)
   const [revealed, setRevealed] = useState(false)
   const [score, setScore] = useState<{ correct: number; incorrect: number }>({ correct: 0, incorrect: 0 })
   const [answered, setAnswered] = useState<Set<number>>(new Set())
 
+  const chapterBase = useMemo(() =>
+    activeChapter === "All" ? QUESTIONS : QUESTIONS.filter(q => CHAPTER_MAP[q.id] === activeChapter)
+  , [activeChapter])
+
+  const availableTopics = useMemo(() =>
+    Array.from(new Set(chapterBase.map(q => q.topic))).sort()
+  , [chapterBase])
+
   const filteredQuestions = useMemo(() => {
-    const base = activeTopic === "All" ? QUESTIONS : QUESTIONS.filter(q => q.topic === activeTopic)
+    const base = activeTopic === "All" ? chapterBase : chapterBase.filter(q => q.topic === activeTopic)
     if (!shuffled) return base
     const arr = [...base]
     for (let i = arr.length - 1; i > 0; i--) {
@@ -426,7 +480,7 @@ export default function PsychQuizPage() {
       [arr[i], arr[j]] = [arr[j], arr[i]]
     }
     return arr
-  }, [activeTopic, shuffled])
+  }, [activeTopic, activeChapter, shuffled, chapterBase])
 
   const currentQ = filteredQuestions[index]
 
@@ -448,6 +502,13 @@ export default function PsychQuizPage() {
 
   const handleTopicChange = (t: string) => {
     setActiveTopic(t)
+    setIndex(0)
+    setRevealed(false)
+  }
+
+  const handleChapterChange = (c: number | "All") => {
+    setActiveChapter(c)
+    setActiveTopic("All")
     setIndex(0)
     setRevealed(false)
   }
@@ -495,7 +556,7 @@ export default function PsychQuizPage() {
             Psych Flashcards
           </h1>
           <p className="text-gray-500 text-sm max-w-2xl">
-            {QUESTIONS.length} questions across {ALL_TOPICS.length} topics. Tap a card to flip and reveal the answer. Track your session score below.
+            {QUESTIONS.length} questions · 5 chapters · {ALL_TOPICS.length} topics. Filter by chapter or topic. Tap to flip.
           </p>
         </motion.div>
 
@@ -516,7 +577,45 @@ export default function PsychQuizPage() {
           </button>
         </motion.div>
 
-        {/* Controls */}
+        {/* Chapter Tabs */}
+        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.13 }}
+          className="space-y-2">
+          <p className="text-[9px] font-black uppercase tracking-widest text-gray-600 flex items-center gap-1.5">
+            <BookOpen className="w-3 h-3" /> Filter by Chapter
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => handleChapterChange("All")}
+              className={cn("px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all",
+                activeChapter === "All"
+                  ? "bg-white text-black border-white shadow-lg shadow-white/10"
+                  : "bg-white/5 border-white/10 text-gray-500 hover:text-white hover:border-white/20"
+              )}
+            >
+              All Chapters ({QUESTIONS.length})
+            </button>
+            {CHAPTERS.map(ch => {
+              const count = QUESTIONS.filter(q => CHAPTER_MAP[q.id] === ch.num).length
+              return (
+                <button key={ch.num}
+                  onClick={() => handleChapterChange(ch.num)}
+                  className={cn("px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all",
+                    activeChapter === ch.num ? CHAPTER_ACTIVE[ch.color] : "bg-white/5 border-white/10 text-gray-500 hover:text-white hover:border-white/20"
+                  )}
+                >
+                  {ch.label} · {count}q
+                </button>
+              )
+            })}
+          </div>
+          {activeChapter !== "All" && (
+            <p className="text-[10px] text-gray-600 italic">
+              {CHAPTERS.find(c => c.num === activeChapter)?.title}
+            </p>
+          )}
+        </motion.div>
+
+        {/* Controls: Topic filter + Shuffle */}
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
           className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between pb-4 border-b border-white/5">
 
@@ -529,11 +628,11 @@ export default function PsychQuizPage() {
                 activeTopic === "All" ? "bg-white text-black border-white" : "bg-white/5 border-white/10 text-gray-500 hover:text-white hover:border-white/20"
               )}
             >
-              All ({QUESTIONS.length})
+              All Topics ({chapterBase.length})
             </button>
-            {ALL_TOPICS.map(t => {
+            {availableTopics.map(t => {
               const c = getColor(t)
-              const count = QUESTIONS.filter(q => q.topic === t).length
+              const count = chapterBase.filter(q => q.topic === t).length
               return (
                 <button key={t}
                   onClick={() => handleTopicChange(t)}
@@ -563,7 +662,7 @@ export default function PsychQuizPage() {
           <AnimatePresence mode="wait">
             {currentQ ? (
               <motion.div
-                key={currentQ.id + activeTopic}
+                key={currentQ.id + activeTopic + activeChapter}
                 initial={{ opacity: 0, x: 30 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -30 }}
@@ -612,12 +711,14 @@ export default function PsychQuizPage() {
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="space-y-4">
           <div className="flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-gray-600" />
-            <p className="text-[10px] font-black uppercase tracking-widest text-gray-600">Topics Overview</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-gray-600">
+              {activeChapter === "All" ? "All Topics" : `Ch ${activeChapter} Topics`}
+            </p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-            {ALL_TOPICS.map(t => {
+            {availableTopics.map(t => {
               const c = getColor(t)
-              const count = QUESTIONS.filter(q => q.topic === t).length
+              const count = chapterBase.filter(q => q.topic === t).length
               return (
                 <button key={t} onClick={() => handleTopicChange(t)}
                   className={cn(
